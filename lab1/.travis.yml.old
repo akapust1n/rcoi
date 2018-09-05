@@ -1,0 +1,44 @@
+sudo: required
+language: cpp
+compiler: gcc
+
+branches:
+  only:
+  - master
+
+matrix:
+  include:   
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - cmake-data
+            - cmake
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+before_install:
+  # update envvar config
+  - eval $MATRIX_EVAL
+  - sudo pip install conan
+
+
+install:
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
+
+script:
+  - cd lab1
+  - conan remote add bincrafters "https://api.bintray.com/conan/akapust1n/wt"
+  - conan install .  
+  - cmake CMakeLists.txt
+  - make
+  - ./bin/lab1
+
+ 
+#after_success:
+ # - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
+  #- chmod +x .travis/deploy.sh
+ # - .travis/deploy.sh

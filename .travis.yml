@@ -1,0 +1,53 @@
+sudo: required
+language: cpp
+compiler: gcc
+
+branches:
+  only:
+  - master
+
+matrix:
+  include:   
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - cmake-data
+            - cmake
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+before_install:
+
+  - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab1v2/.travis/travis.enc -out travis -d
+  - eval $MATRIX_EVAL
+  - sudo pip install conan
+
+
+install:
+ - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
+ - sudo apt-get install libboost-all-dev
+ - wget -c https://github.com/emweb/wt/archive/4.0.4.tar.gz
+ - tar xvxf 4.0.4.tar.gz
+ - cd  wt-4.0.4
+ - mkdir build; cd build
+ - cmake ..
+ - make -j4
+ - sudo make install
+ - sudo ldconfig
+
+script:
+
+  - cd ../../lab1v2
+  - cmake CMakeLists.txt
+  - make
+
+ 
+after_success:
+  - cd ..
+  - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
+  - chmod +x lab1v2/.travis/deploy.sh
+  - bash .travis/deploy.sh

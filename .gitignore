@@ -1,0 +1,46 @@
+build*
+*.o
+MakeFile
+Makefile*
+Makefile.*
+*.gz
+*.tar.gz
+*autosave
+*pro.user
+moc_*
+.vscode/
+*.docx#
+**/node_modules/*
+*.swp
+*md.save
+*.cbp
+**/CMakeFiles/*
+*.cmake
+conanbuildinfo.*
+conaninfo.txt
+CMakeCache.txt
+*.user
+**/bin/*
+
+
+
+=======
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+crow/*
+# Windows shortcuts
+*.lnk
+

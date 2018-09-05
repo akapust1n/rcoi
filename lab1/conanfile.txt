@@ -1,0 +1,5 @@
+[requires]
+wt/4.0.4@akapust1n/wt
+
+[generators]
+cmake
