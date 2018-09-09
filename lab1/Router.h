@@ -11,7 +11,7 @@ public:
     void route(WServer& server)
     {
         server.addResource(&helloWorld, "/hello");
-    };
+    }
 
 private:
     HelloWorld helloWorld;

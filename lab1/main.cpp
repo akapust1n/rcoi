@@ -1,5 +1,7 @@
+#define _GLIBCXX_USE_CXX11_ABI 1
 #include <Wt/WServer.h>
 #include <Wt/WString.h>
+#include <Wt/WResource.h>
 
 int main(int argc, char *argv[])
 {

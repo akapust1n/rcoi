@@ -1,5 +1,5 @@
 [requires]
-wt/4.0.4@akapust1n/wt
+wt/4.0.3@bincrafters/stable
 
 [generators]
 cmake
