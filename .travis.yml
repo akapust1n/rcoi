@@ -1,48 +1,19 @@
 sudo: required
-language: cpp
-compiler: gcc
+language: generic
 
-branches:
-  only:
-  - master
-
-matrix:
-  include:   
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-            - cmake-data
-            - cmake
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+services:
+  - docker
 
 before_install:
-
-  - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab1/.travis/travis.enc -out travis -d
-  - eval "${MATRIX_EVAL}"
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-7 90
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 90
-  - export PATH=/usr/lib/binutils-2.26/bin:${PATH}
-  - sudo apt-get install binutils-2.26
-  - sudo pip install conan 
-  - conan config set compiler.libcxx=libstdc++11
-
+ - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab1/.travis/travis.enc -out travis -d
+ - cd lab1
+ - docker build -t akapust1n/lab1 .
+ - cd ..
 
 install:
- 
- - cd lab1
- - conan remote add bincrafters "https://api.bintray.com/conan/bincrafters/public-conan"
- - conan install .  -s compiler.libcxx=libstdc++11 
- - find conanbuildinfo.cmake -type f -exec sed -i 's/wttest//g' {} \;
- - cmake CMakeLists.txt
- - make
 
  
 after_success:
   - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
-  - chmod +x .travis/deploy.sh
-  - bash .travis/deploy.sh
+  - chmod +x lab1/.travis/deploy.sh
+  - bash lab1/.travis/deploy.sh

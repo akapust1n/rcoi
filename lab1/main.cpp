@@ -1,15 +1,16 @@
-#define _GLIBCXX_USE_CXX11_ABI 1
 #include <Wt/WServer.h>
 #include <Wt/WString.h>
 #include <Wt/WResource.h>
+#include "Router.h"
 
 int main(int argc, char *argv[])
 {
 
 
   try {
-    Wt::WServer server(argv[0]);
-
+    Wt::WServer server(argc,argv);
+    Router router;
+    router.route(server);
 
     server.run();
   } catch (const Wt::WServer::Exception &e) {
