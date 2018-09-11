@@ -3,6 +3,7 @@
 #include "HelloWorld.h"
 #include <Wt/WResource>
 #include <Wt/WServer>
+#include "Sum.h"
 
 using namespace Wt;
 
@@ -11,10 +12,13 @@ public:
     void route(WServer& server)
     {
         server.addResource(&helloWorld, "/hello");
+        server.addResource(&sum, "/sum");
     }
 
 private:
     HelloWorld helloWorld;
+    Sum sum;
+
 };
 
 #endif // ROUTER_H

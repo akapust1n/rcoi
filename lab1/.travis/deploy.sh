@@ -5,10 +5,12 @@ ssh-add travis # Add the private key to SSH
 
 docker save akapust1n/lab1 > lab1.tar
 scp lab1.tar root@kapust1n.ru:/home/apps/
-# Skip this command if you don't need to execute any additional commands after deploying.
+
 ssh -o "StrictHostKeyChecking no" apps@$IP  <<EOF
   pwd
+  docker ps
+  docker ps -a -q --filter ancestor=akapust1n/lab1 | xargs -r docker rm -f
+  docker rmi $(docker images --format '{{.Repository}}' | grep 'akapust1n/lab1') --force
   docker load < lab1.tar
-  docker stop $(docker ps -q --filter ancestor=akapust1n/lab1 )  
   docker run -d -p 5000:8080 akapust1n/lab1 
 EOF
