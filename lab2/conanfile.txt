@@ -1,0 +1,7 @@
+[requires]
+wt/4.0.4.1@akapust1n/stable
+fmt/5.2.0@bincrafters/stable
+jsonformoderncpp/3.2.0@vthiery/stable
+
+[generators]
+cmake
