@@ -1,25 +1,33 @@
-#ifndef HELLOWORLD_H
-#define HELLOWORLD_H
+#ifndef USERS_H
+#define USERS_H
 #include "../Shared/Base.h"
 #include "Model.h"
 #include <Wt/Http/Response>
 #include <Wt/WResource.h>
 #include <Wt/WServer.h>
 
-class GetTitles : public Base {
+class Login : public Base {
 public:
-    GetTitles(Model* _model);
+    Login(Model* _model);
 
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
-class CreateNews : public Base {
+class Register : public Base {
 public:
-    CreateNews(Model* _model);
+    Register(Model* _model);
 
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
-#endif // HELLOWORLD_H
+class DelUser : public Base {
+public:
+    DelUser(Model* _model);
+
+protected:
+    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+};
+
+#endif // USERS_H

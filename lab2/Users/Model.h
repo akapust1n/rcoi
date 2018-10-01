@@ -10,8 +10,10 @@ using nlohmann::json;
 class Model {
 public:
     Model();
-    const json getTitles(int32_t numTitles);
-    const json createNews(const std::string& title, const std::string& body);
+    const json reg(const std::string& name, const std::string& pwd);
+    const json login(const std::string& name, const std::string& pwd);
+    const json del(int32_t userId);
+    const json incRating(int32_t userId);
 
 private:
     Model(const Model&) = delete;

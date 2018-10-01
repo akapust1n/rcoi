@@ -1,15 +1,19 @@
 #ifndef SHAREDHTTP_H
 #define SHAREDHTTP_H
+#include "../3rdpart/macrologger.h"
 #include <Wt/Http/Client>
 #include <Wt/Http/Response>
 #include <Wt/WResource>
 #include <Wt/WServer>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 using namespace Wt;
 namespace HttpAssist {
-const static std::string skUrlNews = "http://localhost:8082";
-const static std::string skUrlComments = "http://localhost:8081";
-const static std::string skUrlUsers = "http://localhost:8081";
+const static std::string skUrlNews = "http://localhost:8081";
+const static std::string skUrlComments = "http://localhost:8082";
+const static std::string skUrlUsers = "http://localhost:8083";
 
 class Client : public Http::Client {
 public:
@@ -89,11 +93,33 @@ inline int32_t extractPositiveParam(const Wt::Http::Request& request, const std:
     }
     return result > -1 ? result : -1;
 }
+
+//return empty string for wrong extract
+inline std::string extractStringParam(const Wt::Http::Request& request, const std::string& paramName)
+{
+    const std::string* temp = request.getParameter(paramName);
+
+    return temp ? (*temp) : std::string();
+}
 inline void writeHeaders(Wt::Http::Response& response, const std::vector<Wt::Http::Message::Header>& headers)
 {
     for (size_t i = 0; i < headers.size(); ++i) {
         response.addHeader(headers[i].name(), headers[i].value());
     }
 }
+inline void writeHeaders(Wt::Http::Message& msg, const std::vector<Wt::Http::Message::Header>& headers)
+{
+    for (size_t i = 0; i < headers.size(); ++i) {
+        msg.setHeader(headers[i].name(), headers[i].value());
+    }
 }
+inline std::string getRequestBody(const Wt::Http::Request& request)
+{
+    std::string body;
+    while (std::getline(request.in(), body))
+        ;
+    return body;
+}
+}
+
 #endif // SHAREDHTTP_H

@@ -10,16 +10,19 @@ using namespace Wt;
 class Router {
 public:
     Router()
-        : getNews(&model)
+        : getTitles(&model)
+        , createNews(&model)
     {
     }
     void route(WServer& server)
     {
-        server.addResource(&getNews, "/news");
+        server.addResource(&getTitles, "/titles");
+        server.addResource(&createNews, "/createNews");
     }
 
 private:
-    GetNews getNews;
+    GetTitles getTitles;
+    CreateNews createNews;
     Model model;
 };
 

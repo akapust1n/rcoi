@@ -7,7 +7,6 @@
 #include <nlohmann/json.hpp>
 
 using namespace Wt;
-using json = nlohmann::json;
 
 class Db {
 public:

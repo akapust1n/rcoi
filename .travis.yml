@@ -1,26 +1,13 @@
 sudo: required
 language: generic
-node_js:
-  - "8"
 
 services:
   - docker
 #build
 before_install:
- - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab1/.travis/travis.enc -out travis -d
- - cd lab1
- - docker build -t akapust1n/lab1 .
- - docker run -d -p 8080:8080 akapust1n/lab1 
+ - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab2/.travis/travis.enc -out travis -d
+ - cd lab2
+ - docker build -t akapust1n/lab2 .
 
 #test
 install:
- - cd test
- - npm install 
- - npm test
- - cd ../..
-
-#deploy
-after_success:
-  - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
-  - chmod +x lab1/.travis/deploy.sh
-  - bash lab1/.travis/deploy.sh

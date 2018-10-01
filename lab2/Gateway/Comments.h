@@ -1,24 +1,24 @@
-#ifndef HELLOWORLD_H
-#define HELLOWORLD_H
+#ifndef COMMENTS_H
+#define COMMENTS_H
 #include "../Shared/Base.h"
 #include <Wt/Http/Response.h>
 #include <Wt/WResource.h>
 #include <Wt/WServer.h>
 
-class GetTitles : public Base {
+class CreateComment : public Base {
 public:
-    GetTitles(Model* _model);
+    CreateComment(Model* _model);
 
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
-class CreateNews : public Base {
+class Like : public Base {
 public:
-    CreateNews(Model* _model);
+    Like(Model* _model);
 
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
-#endif // HELLOWORLD_H
+#endif // COMMENTS_H

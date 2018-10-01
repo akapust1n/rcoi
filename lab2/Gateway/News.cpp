@@ -1,21 +1,28 @@
 #include "News.h"
 #include "../Shared/HttpAssist.h"
+#include "../Shared/JsonStructs.h"
+
 using namespace HttpAssist;
 
-GetNews::~GetNews()
-{
-    beingDeleted();
-}
-
-GetNews::GetNews(Model* _model)
+GetTitles::GetTitles(Model* _model)
     : Base(_model)
 {
 }
 
-//todo: pagination
-void GetNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
+void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    const Wt::Http::Message& msg = model->getfromNews(request.headers(), request.pathInfo(), "news");
-    writeHeaders(response, msg.headers());
-    response.out() << msg.body();
+    const Wt::Http::Message msg = model->getTitles(request.headers(), request.queryString());
+    writeOutput(msg, response);
+}
+
+CreateNews::CreateNews(Model* _model)
+    : Base(_model)
+{
+}
+
+void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
+{
+    const std::string body = getRequestBody(request);
+    const Wt::Http::Message& msg = model->createNews(request.headers(), body);
+    writeOutput(msg, response);
 }

@@ -1,30 +1,51 @@
 #include "News.h"
 #include "../Shared/HttpAssist.h"
+#include "../Shared/JsonStructs.h"
 #include "Model.h"
+
 using namespace ns;
 using namespace HttpAssist;
 
-GetNews::~GetNews()
-{
-    beingDeleted();
-}
-
-GetNews::GetNews(Model* _model)
+GetTitles::GetTitles(Model* _model)
     : Base(_model)
 {
 }
 
-void GetNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
+void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
     std::string result;
-    int32_t countNews = extractPositiveParam(request, "countNews");
-    LOG_INFO("zzz");
-    std::cout << countNews << std::endl;
-    if (request.method() != "GET" or countNews < 0 or countNews > 50) {
+    int32_t countTitles = extractPositiveParam(request, "count");
+    std::cout << countTitles << std::endl;
+    if (request.method() != "GET" or countTitles < 0 or countTitles > 50) {
         response.setStatus(403);
         return;
     }
-    json news = model->getNews(countNews);
-    std::string zz = news.dump();
-    response.out() << zz;
+    json news = model->getTitles(countTitles);
+    if (news.empty()) {
+        response.out() << "Cant find news";
+        return;
+    }
+    response.out() << news.dump();
+}
+
+CreateNews::CreateNews(Model* _model)
+    : Base(_model)
+{
+}
+
+void CreateNews::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    json newsJson = json::parse(getRequestBody(request));
+    News news;
+    if (request.method() != "POST" or !from_json(newsJson, news)) {
+        response.setStatus(403);
+        return;
+    }
+
+    json newsResponse = model->createNews(news.title, news.body);
+    if (newsResponse.empty()) {
+        response.setStatus(500);
+        return;
+    }
+    response.out() << newsResponse.dump();
 }

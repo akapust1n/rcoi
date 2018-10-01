@@ -40,7 +40,7 @@ file(GLOB news_SRC
 )
 
 add_executable(news ${news_SRC} ${shared_SRC} ${3rdpart_SRC})
-target_link_libraries(news ${CONAN_LIBS} mysqlclient)
+target_link_libraries(news ${CONAN_LIBS} mysqlclient )
 
 file(GLOB users_SRC
     "./Users/*.h"
@@ -48,7 +48,7 @@ file(GLOB users_SRC
 )
 
 add_executable(users ${users_SRC} ${shared_SRC} ${3rdpart_SRC})
-target_link_libraries(users ${CONAN_LIBS})
+target_link_libraries(users ${CONAN_LIBS} mysqlclient)
 
 file(GLOB comments_SRC
     "./Comments/*.h"
@@ -56,5 +56,5 @@ file(GLOB comments_SRC
 )
 
 add_executable(comments ${comments_SRC} ${shared_SRC} ${3rdpart_SRC})
-target_link_libraries(comments ${CONAN_LIBS})
+target_link_libraries(comments ${CONAN_LIBS}  mysqlclient)
 

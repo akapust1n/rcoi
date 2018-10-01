@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS News (
 )  ENGINE=INNODB;
 
 INSERT INTO News(title,body) VALUES("ab", "cde");
+INSERT INTO News(title,body) VALUES("gd", "ghj");
 
 
 drop database if exists lab2Users;
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS Users (
     ID  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255),
+    rating INT NOT NULL DEFAULT  0,
     creationData TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;
 
@@ -35,6 +37,9 @@ CREATE TABLE IF NOT EXISTS Comments (
     newsId INT NOT NULL,
     userId INT NOT NULL,
     body TEXT,
+   rating INT NOT NULL DEFAULT 0,
     creationData TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY(newsId, userId)
 )  ENGINE=INNODB;
+INSERT INTO Comments(newsId, userId, body) VALUES(1,  2," comment1");
+INSERT INTO Comments(newsId, userId, body) VALUES(1,  1," comment2");
