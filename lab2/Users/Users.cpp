@@ -81,7 +81,28 @@ IncRating::IncRating(Model* _model)
 void IncRating::handleRequest(const Http::Request& request, Http::Response& response)
 {
     json userIdJson = json::parse(getRequestBody(request));
-    UserAuth userAuth;
+    auto userIdIt = userIdJson.find("userId");
+    if (request.method() != "POST" or userIdIt == userIdJson.end()) {
+        response.setStatus(403);
+        return;
+    }
+
+    json newsResponse = model->incRating(userIdIt.value().get<int32_t>());
+    if (newsResponse.empty()) {
+        response.setStatus(500);
+        return;
+    }
+    response.out() << newsResponse.dump();
+}
+
+GetUsername::GetUsername(Model* _model)
+    : Base(_model)
+{
+}
+
+void GetUsername::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    json userIdJson = json::parse(getRequestBody(request));
     auto userIdIt = userIdJson.find("userId");
     if (request.method() != "POST" or userIdIt == userIdJson.end()) {
         response.setStatus(403);

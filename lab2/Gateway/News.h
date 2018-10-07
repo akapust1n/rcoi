@@ -22,4 +22,12 @@ protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
+class OneNews : public Base {
+public:
+    OneNews(Model* _model);
+
+protected:
+    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+};
+
 #endif // HELLOWORLD_H

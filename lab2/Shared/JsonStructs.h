@@ -66,28 +66,6 @@ inline bool from_json(const json& j, Comment& p)
     return false;
 }
 
-struct LikeJs {
-    int32_t entity = 0;
-    int32_t entityId = 0;
-};
-
-inline void to_json(json& j, const LikeJs& p)
-{
-    j = json{ { "entity", p.entity }, { "entityId", p.entityId } };
-}
-inline bool from_json(const json& j, LikeJs& p)
-{
-    auto entityIt = j.find("entity");
-    auto entityIdIt = j.find("entityId");
-
-    if (entityIt != j.cend() && entityIdIt != j.cend()) {
-        p.entity = entityIt.value().get<int32_t>();
-        p.entityId = entityIdIt.value().get<int32_t>();
-        return true;
-    }
-    return false;
-}
-
 struct UserAuth {
     std::string name;
     std::string password;
@@ -105,6 +83,56 @@ inline bool from_json(const json& j, UserAuth& p)
     if (nameIt != j.end() && pwdIt != j.end()) {
         p.name = nameIt.value().get<std::string>();
         p.password = pwdIt.value().get<std::string>();
+        return true;
+    }
+    return false;
+}
+
+struct CommentInternal {
+    int32_t commentId;
+    int32_t userId;
+    std::string body;
+};
+
+inline void to_json(json& j, const CommentInternal& p)
+{
+    j = json{ { "userId", p.userId }, { "commentId", p.commentId }, { "body", p.body } };
+}
+inline bool from_json(const json& j, CommentInternal& p)
+{
+    auto userIdIt = j.find("userId");
+    auto commentIdIt = j.find("commentId");
+    auto textIt = j.find("body");
+
+    if (userIdIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
+        p.userId = userIdIt.value().get<int32_t>();
+        p.commentId = commentIdIt.value().get<int32_t>();
+        p.body = textIt.value().get<std::string>();
+        return true;
+    }
+    return false;
+}
+
+struct CommentExternal {
+    int32_t commentId;
+    std::string name;
+    std::string body;
+};
+
+inline void to_json(json& j, const CommentExternal& p)
+{
+    j = json{ { "commentId", p.commentId }, { "name", p.name }, { "body", p.body } };
+}
+inline bool from_json(const json& j, CommentExternal& p)
+{
+    auto nameIt = j.find("name");
+    auto commentIdIt = j.find("commentId");
+    auto textIt = j.find("body");
+
+    if (nameIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
+        p.name = nameIt.value().get<std::string>();
+        p.commentId = commentIdIt.value().get<int32_t>();
+        p.body = textIt.value().get<std::string>();
         return true;
     }
     return false;

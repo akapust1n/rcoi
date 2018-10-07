@@ -118,3 +118,36 @@ const json Model::likeComment(int32_t commentId)
 
     return result;
 }
+
+const json Model::getComments(int32_t newsId, int32_t page)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+
+    json result = json::array();
+
+    auto req = db->prepareStatement("SELECT ID,userId,body from Comments where newsId = ? limit ? offset ?");
+    req->bind(0, newsId);
+    req->bind(1, commentsPerPage);
+    req->bind(2, commentsPerPage * page);
+
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        try {
+            req->execute();
+            LOG_INFO("Db request %s", req->sql().c_str());
+            while (req->nextRow()) {
+                CommentInternal ci;
+                req->getResult(0, &ci.commentId);
+                req->getResult(1, &ci.userId);
+                req->getResult(2, &ci.body, 255);
+                result.push_back(ci);
+            };
+        } catch (...) {
+            LOG_ERROR("Cant like comment!");
+        }
+    };
+
+    return result;
+}

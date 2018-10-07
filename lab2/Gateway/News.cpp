@@ -26,3 +26,15 @@ void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Respo
     const Wt::Http::Message& msg = model->createNews(request.headers(), body);
     writeOutput(msg, response);
 }
+
+OneNews::OneNews(Model *_model):
+    Base(_model)
+{
+
+}
+
+void OneNews::handleRequest(const Http::Request &request, Http::Response &response)
+{
+    const Wt::Http::Message msg = model->getOneNews(request.headers(), request.queryString());
+    writeOutput(msg, response);
+}

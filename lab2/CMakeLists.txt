@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.8)
 
 project(lab2 CXX)
 
@@ -12,7 +12,6 @@ set(CMAKE_CONFIGURATION_TYPES "Debug" CACHE STRING "" FORCE)
 IF( NOT CMAKE_BUILD_TYPE )
    SET( CMAKE_BUILD_TYPE Debug ... FORCE )
 ENDIF()
-
 
 
 file(GLOB shared_SRC

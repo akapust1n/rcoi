@@ -37,4 +37,12 @@ protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
+class GetComments : public Base {
+public:
+    GetComments(Model* _model);
+
+protected:
+    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+};
+
 #endif // COMMENTS_H

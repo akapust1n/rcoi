@@ -26,6 +26,7 @@ public:
     const Wt::Http::Message reg(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message del(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message like(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
+    const Wt::Http::Message getOneNews(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
 
 private:
     const Wt::Http::Message deletefromService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);

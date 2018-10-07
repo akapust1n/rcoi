@@ -106,7 +106,7 @@ const json Model::incRating(int32_t userId)
         try {
             req->execute();
             if (req->affectedRowCount() > 0) {
-                result["result"] = "user is inremented!";
+                result["result"] = "user rating is inremented!";
             }
         } catch (...) {
             LOG_INFO("wrong userId!");

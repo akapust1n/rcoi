@@ -49,3 +49,24 @@ void CreateNews::handleRequest(const Http::Request& request, Http::Response& res
     }
     response.out() << newsResponse.dump();
 }
+
+GetNews::GetNews(Model *_model):
+    Base(_model)
+{
+
+}
+
+void GetNews::handleRequest(const Http::Request &request, Http::Response &response)
+{
+    int32_t newsId = extractPositiveParam(request, "newsId");
+    if (request.method() != "GET" or newsId < 0) {
+        response.setStatus(403);
+        return;
+    }
+    json news = model->getNews(newsId);
+    if (news.empty()) {
+        response.out() << "Cant find news";
+        return;
+    }
+    response.out() << news.dump();
+}

@@ -1,4 +1,4 @@
-#include "Comments.h"
+﻿#include "Comments.h"
 #include "../Shared/HttpAssist.h"
 #include "../Shared/JsonStructs.h"
 #include "Model.h"
@@ -94,4 +94,21 @@ void DeleteComments::handleRequest(const Http::Request& request, Http::Response&
         return;
     }
     response.out() << result.dump();
+}
+
+void GetComments::handleRequest(const Http::Request &request, Http::Response &response)
+{
+    int32_t newsId = extractPositiveParam(request, "newsId");
+    int32_t page = extractPositiveParam(request, "page");
+    if (request.method() != "GET" or newsId < 0 or page < 0) {
+        response.setStatus(403);
+        return;
+    }
+    json news = model->getComments(newsId, page);
+    if (news.empty()) {
+        response.out() << "Cant find news";
+        return;
+    }
+    response.out() << news.dump();
+
 }

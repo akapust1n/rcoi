@@ -14,10 +14,12 @@ public:
     const json countComments(const std::vector<int32_t>& ids);
     const json deleteComments(int32_t userId);
     const json likeComment(int32_t commentId);
+    const json getComments(int32_t newsId, int32_t page);
 
 private:
     Model(const Model&) = delete;
     Dbo::backend::MySQL* db;
+    const int32_t commentsPerPage = 10;
 };
 
 #endif // MODEL_H

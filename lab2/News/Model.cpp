@@ -58,3 +58,33 @@ const json Model::createNews(const std::string& title, const std::string& body)
 
     return result;
 }
+
+const json Model::getNews(int32_t newsId)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    json result;
+
+    auto req = db->prepareStatement("ID, title, UNIX_TIMESTAMP(creationDate) from News where ID=?");
+    req->bind(0, newsId);
+
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        try {
+            req->execute();
+            LOG_INFO("Db request %s", req->sql().c_str());
+            if (req->nextRow()) {
+                News news;
+                req->getResult(0, &news.ID);
+                req->getResult(1, &news.title, 255);
+                req->getResult(2, &news.timestamp);
+                result = news;
+            };
+        } catch (...) {
+            LOG_INFO("Cant insert news!");
+        }
+    };
+
+    return result;
+}
