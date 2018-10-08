@@ -14,24 +14,20 @@ const json Model::createComment(int32_t userId, int32_t newsId, const std::strin
     if (!db)
         db = Db::GetInst()->GetMysql();
     json result;
-    auto req = db->prepareStatement("INSERT INTO Comments(newsId, userId, body) VALUES(?, ?, \"?\"); SELECT"
-                                    " LAST_INSERT_ID();");
+    auto req = db->prepareStatement("INSERT INTO Comments(newsId, userId, body) VALUES(?, ?, ?);");
     req->bind(0, newsId);
     req->bind(1, userId);
     req->bind(2, text);
 
-    int32_t commentId;
     if (!req) {
         LOG_ERROR("Cant prepare statement");
     } else {
         try {
             LOG_INFO("Db request %s", req->sql().c_str());
             req->execute();
-            req->nextRow();
-            req->getResult(0, &commentId);
-            if (req->nextRow())
+            if (req->affectedRowCount() == 0)
                 return json();
-            result["commentId"] = commentId;
+            result["commentId"] = req->insertedId();
         } catch (...) {
             LOG_INFO("Cant create comment!");
         }
@@ -151,3 +147,26 @@ const json Model::getComments(int32_t newsId, int32_t page)
 
     return result;
 }
+
+#ifdef IS_TEST_BUILD
+const json Model::clear()
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    json result;
+    auto req = db->prepareStatement("DELETE  from Comments;");
+
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        LOG_INFO("Db request %s", req->sql().c_str());
+        try {
+            req->execute();
+            result["result"] = "comments is dropped!";
+        } catch (...) {
+            LOG_INFO("cant drop comment!");
+        }
+    }
+    return result;
+}
+#endif

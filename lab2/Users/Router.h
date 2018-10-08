@@ -14,6 +14,9 @@ public:
         , reg(&model)
         , del(&model)
         , incRating(&model)
+#ifdef IS_TEST_BUILD
+        , clear(&model)
+#endif
     {
     }
     void route(WServer& server)
@@ -22,6 +25,9 @@ public:
         server.addResource(&reg, "/register");
         server.addResource(&del, "/delete");
         server.addResource(&incRating, "/incRating");
+#ifdef IS_TEST_BUILD
+        server.addResource(&clear, "/clear");
+#endif
     }
 
 private:
@@ -30,6 +36,9 @@ private:
     Del del;
     IncRating incRating;
     Model model;
+#ifdef IS_TEST_BUILD
+    Clear clear;
+#endif
 };
 
 #endif // ROUTER_H

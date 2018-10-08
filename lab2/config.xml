@@ -1,0 +1,8 @@
+<settings>
+    <newsreleasedb>lab2News</newsreleasedb>
+    <newstestdb>lab2NewsTest</newstestdb>
+    <usersreleasedb>lab2Users</usersreleasedb>
+    <userstestdb>lab2UsersTest</userstestdb>
+    <commentsreleasedb>lab2Comments</commentreleasedb>
+    <commentstestdb>lab2CommentsTest</commentstestdb>
+</settings>

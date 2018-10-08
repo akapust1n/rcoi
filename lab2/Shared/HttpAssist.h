@@ -37,6 +37,7 @@ public:
 
         while (!done_)
             doneCondition_.wait(guard);
+        reset();
     }
 
     void reset()

@@ -12,18 +12,27 @@ public:
     Router()
         : getTitles(&model)
         , createNews(&model)
+#ifdef IS_TEST_BUILD
+        , clear(&model)
+#endif
     {
     }
     void route(WServer& server)
     {
         server.addResource(&getTitles, "/titles");
         server.addResource(&createNews, "/createNews");
+#ifdef IS_TEST_BUILD
+        server.addResource(&clear, "/clear");
+#endif
     }
 
 private:
     GetTitles getTitles;
     CreateNews createNews;
     Model model;
+#ifdef IS_TEST_BUILD
+    Clear clear;
+#endif
 };
 
 #endif // ROUTER_H

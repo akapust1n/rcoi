@@ -1,24 +1,23 @@
-
-
 ## GET
-
-> oneNews
-
-Params: newsId
-
-Desc: Get one news with comments(every comment contain username)
-
-Return codes: 200,403,500
 
 > titles
 
-Params: count
+Params: page
 
-Desc: Get last count titles of news with comment count
+Desc: Get page of news with comment count(multi-service request). 10 comments per page
 
-Return codes: 200,403
+Return codes: 200,403,500
 
-> login
+## POST
+> like
+
+Params: commentId, userid of author comment
+
+Desc: like comment(update rating author of comment and comment rating)
+
+Return codes: 200,403,500
+
+> register
 
 Params: username, password
 
@@ -26,17 +25,7 @@ Desc: Return userId if success
 
 Return codes: 200,403,500
 
-
-## POST
-> like
-
-Params: commentId, userid of author comment
-
-Desc: like comment
-
-Return codes: 200,403,500
-
-> register
+> login
 
 Params: username, password
 
@@ -66,9 +55,17 @@ Return codes: 200,403,500
 
 Params: userId
 
-Desc: Delete user
+Desc: Delete user(и все его комменты)
 
 Return codes: 200,403,500
 
+###TODO
+###GET
+> oneNews
 
+Params: newsId
+
+Desc: Get one news with comments(every comment contain username)
+
+Return codes: 200,403,500
 

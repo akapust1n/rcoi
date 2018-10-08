@@ -96,7 +96,7 @@ void DeleteComments::handleRequest(const Http::Request& request, Http::Response&
     response.out() << result.dump();
 }
 
-void GetComments::handleRequest(const Http::Request &request, Http::Response &response)
+void GetComments::handleRequest(const Http::Request& request, Http::Response& response)
 {
     int32_t newsId = extractPositiveParam(request, "newsId");
     int32_t page = extractPositiveParam(request, "page");
@@ -110,5 +110,18 @@ void GetComments::handleRequest(const Http::Request &request, Http::Response &re
         return;
     }
     response.out() << news.dump();
-
 }
+
+#ifdef IS_TEST_BUILD
+
+Clear::Clear(Model* _model)
+    : Base(_model)
+{
+}
+
+void Clear::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    json result = model->clear();
+    response.out() << result.dump();
+}
+#endif

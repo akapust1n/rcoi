@@ -1,5 +1,5 @@
-#ifndef HELLOWORLD_H
-#define HELLOWORLD_H
+#ifndef NEWS_H
+#define NEWS_H
 #include "../Shared/Base.h"
 #include "Model.h"
 #include <Wt/Http/Response>
@@ -22,12 +22,21 @@ protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
-class OneNews : public Base {
+//class OneNews : public Base {
+//public:
+//    OneNews(Model* _model);
+
+//protected:
+//    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+//};
+#ifdef IS_TEST_BUILD
+class Clear : public Base {
 public:
-    OneNews(Model* _model);
+    Clear(Model* _model);
 
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
+#endif
 
-#endif // HELLOWORLD_H
+#endif // NEWS_H

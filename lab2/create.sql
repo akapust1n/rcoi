@@ -9,10 +9,14 @@ CREATE TABLE IF NOT EXISTS News (
     body TEXT,
     creationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;
-
 INSERT INTO News(title,body) VALUES("ab", "cde");
 INSERT INTO News(title,body) VALUES("gd", "ghj");
 
+
+drop database if exists lab2NewsTest;
+create database lab2NewsTest;
+use lab2NewsTest;
+CREATE TABLE News LIKE lab2News.News;
 
 drop database if exists lab2Users;
 create database lab2Users;
@@ -27,6 +31,10 @@ CREATE TABLE IF NOT EXISTS Users (
     creationData TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;
 
+drop database if exists lab2UsersTest;
+create database lab2UsersTest;
+use lab2UsersTest;
+CREATE TABLE Users LIKE lab2Users.Users;
 
 drop database if exists lab2Comments;
 create database lab2Comments;
@@ -43,3 +51,10 @@ CREATE TABLE IF NOT EXISTS Comments (
 )  ENGINE=INNODB;
 INSERT INTO Comments(newsId, userId, body) VALUES(1,  2," comment1");
 INSERT INTO Comments(newsId, userId, body) VALUES(1,  1," comment2");
+
+drop database if exists lab2CommentsTest;
+create database lab2CommentsTest;
+use lab2CommentsTest;
+CREATE TABLE Comments LIKE lab2Comments.Comments;
+
+

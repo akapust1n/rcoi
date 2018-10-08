@@ -10,7 +10,7 @@ class Login : public Base {
 public:
     Login(Model* _model);
 
-protected:
+public:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 

@@ -12,8 +12,12 @@ class Db {
 public:
     bool Init(std::string scheme)
     {
-        //mysql->
+#ifdef DOCKER
+        mysql.reset(new Dbo::backend::MySQL(scheme, "root", "1111", "database", 3306));
+#else
         mysql.reset(new Dbo::backend::MySQL(scheme, "root", "1111"));
+#endif
+
         return true;
     }
     static Db* GetInst()

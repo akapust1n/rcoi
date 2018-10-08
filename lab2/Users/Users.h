@@ -45,4 +45,14 @@ protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
+#ifdef IS_TEST_BUILD
+class Clear : public Base {
+public:
+    Clear(Model* _model);
+
+protected:
+    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+};
+#endif
+
 #endif // USERS_H

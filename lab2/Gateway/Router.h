@@ -18,6 +18,9 @@ public:
         , reg(&model)
         , delUser(&model)
         , createNews(&model)
+#ifdef IS_TEST_BUILD
+        , clear(&model)
+#endif
     {
     }
     void route(WServer& server)
@@ -29,6 +32,9 @@ public:
         server.addResource(&delUser, "/delete");
         server.addResource(&createNews, "/createNews");
         server.addResource(&reg, "/register");
+#ifdef IS_TEST_BUILD
+        server.addResource(&clear, "/clear");
+#endif
     }
 
 private:
@@ -40,6 +46,9 @@ private:
     DelUser delUser;
     CreateNews createNews;
     Model model;
+#ifdef IS_TEST_BUILD
+    Clear clear;
+#endif
 };
 
 #endif // ROUTER_H

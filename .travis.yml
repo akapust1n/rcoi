@@ -6,8 +6,14 @@ services:
 #build
 before_install:
  - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab2/.travis/travis.enc -out travis -d
+ - sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+ - sudo chmod +x /usr/local/bin/docker-compose
+ - docker pull akapust1n/test:latest
  - cd lab2
  - docker build -t akapust1n/lab2 .
+ - docker-compose up --abort-on-container-exit || true
+ - docker-compose logs -f lab2
+ - docker-compose down
 
 #test
 install:

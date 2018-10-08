@@ -35,6 +35,7 @@ Reg::Reg(Model* _model)
 
 void Reg::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    std::cout << "\n\nStart";
     json userAuthJson = json::parse(getRequestBody(request));
     UserAuth userAuth;
     if (request.method() != "POST" or !from_json(userAuthJson, userAuth)) {
@@ -43,8 +44,10 @@ void Reg::handleRequest(const Http::Request& request, Http::Response& response)
     }
 
     json newsResponse = model->reg(userAuth.name, userAuth.password);
+    std::cout << "\nZZ" << newsResponse.empty() << newsResponse.size();
     if (newsResponse.empty()) {
         response.setStatus(500);
+        std::cout << "\nSTATUS";
         return;
     }
     response.out() << newsResponse.dump();
@@ -116,3 +119,17 @@ void GetUsername::handleRequest(const Http::Request& request, Http::Response& re
     }
     response.out() << newsResponse.dump();
 }
+
+#ifdef IS_TEST_BUILD
+
+Clear::Clear(Model* _model)
+    : Base(_model)
+{
+}
+
+void Clear::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    json result = model->clear();
+    response.out() << result.dump();
+}
+#endif

@@ -10,13 +10,16 @@ using nlohmann::json;
 class Model {
 public:
     Model();
-    const json getTitles(int32_t numTitles);
+    const json getTitles(int32_t page);
     const json createNews(const std::string& title, const std::string& body);
     const json getNews(int32_t newsId);
-
+#ifdef IS_TEST_BUILD
+    const json clear();
+#endif
 private:
     Model(const Model&) = delete;
     Dbo::backend::MySQL* db;
+    const int32_t newsPerPage = 10;
 };
 
 #endif // MODEL_H

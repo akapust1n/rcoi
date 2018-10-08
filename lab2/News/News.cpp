@@ -13,15 +13,15 @@ GetTitles::GetTitles(Model* _model)
 
 void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    std::string result;
-    int32_t countTitles = extractPositiveParam(request, "count");
-    std::cout << countTitles << std::endl;
-    if (request.method() != "GET" or countTitles < 0 or countTitles > 50) {
+    int32_t page = extractPositiveParam(request, "page");
+    std::cout << page << std::endl;
+    if (request.method() != "GET" or page < 0) {
         response.setStatus(403);
         return;
     }
-    json news = model->getTitles(countTitles);
+    json news = model->getTitles(page);
     if (news.empty()) {
+        response.setStatus(500);
         response.out() << "Cant find news";
         return;
     }
@@ -50,13 +50,12 @@ void CreateNews::handleRequest(const Http::Request& request, Http::Response& res
     response.out() << newsResponse.dump();
 }
 
-GetNews::GetNews(Model *_model):
-    Base(_model)
+GetNews::GetNews(Model* _model)
+    : Base(_model)
 {
-
 }
 
-void GetNews::handleRequest(const Http::Request &request, Http::Response &response)
+void GetNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
     int32_t newsId = extractPositiveParam(request, "newsId");
     if (request.method() != "GET" or newsId < 0) {
@@ -70,3 +69,17 @@ void GetNews::handleRequest(const Http::Request &request, Http::Response &respon
     }
     response.out() << news.dump();
 }
+
+#ifdef IS_TEST_BUILD
+
+Clear::Clear(Model* _model)
+    : Base(_model)
+{
+}
+
+void Clear::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    json result = model->clear();
+    response.out() << result.dump();
+}
+#endif

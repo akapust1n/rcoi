@@ -27,14 +27,29 @@ void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Respo
     writeOutput(msg, response);
 }
 
-OneNews::OneNews(Model *_model):
-    Base(_model)
-{
+    //OneNews::OneNews(Model* _model)
+    //    : Base(_model)
+    //{
+    //}
 
+    //void OneNews::handleRequest(const Http::Request& request, Http::Response& response)
+    //{
+    //    const Wt::Http::Message msg = model->getOneNews(request.headers(), request.queryString());
+    //    writeOutput(msg, response);
+    //}
+
+#ifdef IS_TEST_BUILD
+
+Clear::Clear(Model* _model)
+    : Base(_model)
+{
 }
 
-void OneNews::handleRequest(const Http::Request &request, Http::Response &response)
+void Clear::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    const Wt::Http::Message msg = model->getOneNews(request.headers(), request.queryString());
+    std::cout << std::endl
+              << "HEY";
+    const Wt::Http::Message msg = model->clear(request.headers());
     writeOutput(msg, response);
 }
+#endif

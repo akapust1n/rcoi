@@ -102,6 +102,7 @@ const Http::Message Model::login(const std::vector<Http::Message::Header>& heade
 const Http::Message Model::reg(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
     Wt::Http::Message result = postToService(Users, headers, body, "register");
+    std::cout << "RESULT: " << result.status();
     return result;
 }
 
@@ -182,3 +183,22 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
 
     return result;
 }
+#ifdef IS_TEST_BUILD
+
+const Http::Message Model::clear(const std::vector<Http::Message::Header>& headers)
+{
+    Wt::Http::Message result;
+
+    Wt::Http::Message result1 = deletefromService(Comments, headers, {}, "clear");
+    Wt::Http::Message result2 = deletefromService(Users, headers, {}, "clear");
+    Wt::Http::Message result3 = deletefromService(News, headers, {}, "clear");
+    if (result1.status() == 200 and result2.status() == 200 and result3.status() == 200) {
+        result.addBodyText("Databases is clear!");
+        result.setStatus(200);
+    } else {
+        result.addBodyText("Smth is wrong!");
+        result.setStatus(500);
+    }
+    return result;
+}
+#endif

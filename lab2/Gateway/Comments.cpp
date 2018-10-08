@@ -14,7 +14,7 @@ CreateComment::CreateComment(Model* _model)
 void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
     const std::string body = getRequestBody(request);
-    const Wt::Http::Message msg = model->reg(request.headers(), body);
+    const Wt::Http::Message msg = model->createComment(request.headers(), body);
     writeOutput(msg, response);
 }
 

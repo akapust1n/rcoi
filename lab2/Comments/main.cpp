@@ -1,3 +1,4 @@
+#include "../Shared/Congif.h"
 #include "../Shared/Database.h"
 #include "Router.h"
 #include <Wt/WResource.h>
@@ -11,7 +12,7 @@ int main(int argc, char* argv[])
         Wt::WServer server(argc, argv);
         Router router;
         router.route(server);
-        if (!Db::GetInst()->Init("lab2Comments")) {
+        if (!Db::GetInst()->Init(Config::GetInst()->getCommentsDb())) {
             LOG_ERROR("Cant connect to database");
             return 1;
         }

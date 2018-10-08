@@ -13,8 +13,8 @@ Model::Model()
 
 const json Model::reg(const std::string& name, const std::string& pwd)
 {
-    // if (!db)
-    db = Db::GetInst()->GetMysql();
+    if (!db)
+        db = Db::GetInst()->GetMysql();
 
     json result;
     auto req = db->prepareStatement("INSERT INTO Users(name,password) VALUES(?,?)");
@@ -29,12 +29,11 @@ const json Model::reg(const std::string& name, const std::string& pwd)
         try {
             req->execute();
 
+            if (req->affectedRowCount() != 0) {
+                result["userId"] = req->insertedId();
+            }
         } catch (...) {
             LOG_ERROR("Cant create user!");
-        }
-
-        if (req->affectedRowCount() != 0) {
-            result["userId"] = req->insertedId();
         }
     }
     return result;
@@ -96,7 +95,7 @@ const json Model::incRating(int32_t userId)
     if (!db)
         db = Db::GetInst()->GetMysql();
     json result;
-    auto req = db->prepareStatement("UPDATE User SET rating = rating+1 WHERE ID=?");
+    auto req = db->prepareStatement("UPDATE Users SET rating = rating+1 WHERE ID=?");
 
     if (!req) {
         LOG_ERROR("Cant prepare statement");
@@ -114,3 +113,25 @@ const json Model::incRating(int32_t userId)
     }
     return result;
 }
+#ifdef IS_TEST_BUILD
+const json Model::clear()
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    json result;
+    auto req = db->prepareStatement("DELETE  from Users;");
+
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        LOG_INFO("Db request %s", req->sql().c_str());
+        try {
+            req->execute();
+            result["result"] = "users is dropped!";
+        } catch (...) {
+            LOG_INFO("cant drop Users!");
+        }
+    }
+    return result;
+}
+#endif

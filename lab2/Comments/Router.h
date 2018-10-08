@@ -14,6 +14,9 @@ public:
         , countComment(&model)
         , delComments(&model)
         , likeComment(&model)
+#ifdef IS_TEST_BUILD
+        , clear(&model)
+#endif
     {
     }
     void route(WServer& server)
@@ -22,6 +25,9 @@ public:
         server.addResource(&countComment, "/count");
         server.addResource(&delComments, "/deleteByUser");
         server.addResource(&likeComment, "/like");
+#ifdef IS_TEST_BUILD
+        server.addResource(&clear, "/clear");
+#endif
     }
 
 private:
@@ -30,6 +36,9 @@ private:
     DeleteComments delComments;
     LikeComment likeComment;
     Model model;
+#ifdef IS_TEST_BUILD
+    Clear clear;
+#endif
 };
 
 #endif // ROUTER_H
