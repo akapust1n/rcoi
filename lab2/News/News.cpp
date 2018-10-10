@@ -35,7 +35,7 @@ CreateNews::CreateNews(Model* _model)
 
 void CreateNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json newsJson = json::parse(getRequestBody(request));
+    json newsJson = tryParsejson(getRequestBody(request));
     News news;
     if (request.method() != "POST" or !from_json(newsJson, news)) {
         response.setStatus(403);

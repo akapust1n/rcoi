@@ -20,13 +20,17 @@ inline void to_json(json& j, const News& p)
 
 inline bool from_json(const json& j, News& p)
 {
-    auto titleIt = j.find("title");
-    auto bodyit = j.find("body");
-    if (titleIt != j.cend() && bodyit != j.cend()) {
-        p.body = bodyit.value().get<std::string>();
-        p.title = titleIt.value().get<std::string>();
-        return true;
+    try {
+        auto titleIt = j.find("title");
+        auto bodyit = j.find("body");
+        if (titleIt != j.cend() && bodyit != j.cend()) {
+            p.body = bodyit.value().get<std::string>();
+            p.title = titleIt.value().get<std::string>();
+            return true;
+        }
+    } catch (...) {
     }
+
     return false;
 }
 
@@ -53,15 +57,18 @@ inline void to_json(json& j, const Comment& p)
 }
 inline bool from_json(const json& j, Comment& p)
 {
-    auto userIdIt = j.find("userId");
-    auto newsIdIt = j.find("newsId");
-    auto textIt = j.find("text");
+    try {
+        auto userIdIt = j.find("userId");
+        auto newsIdIt = j.find("newsId");
+        auto textIt = j.find("text");
 
-    if (userIdIt != j.cend() && newsIdIt != j.cend() && textIt != j.end()) {
-        p.userId = userIdIt.value().get<int32_t>();
-        p.newsId = newsIdIt.value().get<int32_t>();
-        p.text = textIt.value().get<std::string>();
-        return true;
+        if (userIdIt != j.cend() && newsIdIt != j.cend() && textIt != j.end()) {
+            p.userId = userIdIt.value().get<int32_t>();
+            p.newsId = newsIdIt.value().get<int32_t>();
+            p.text = textIt.value().get<std::string>();
+            return true;
+        }
+    } catch (...) {
     }
     return false;
 }
@@ -77,13 +84,16 @@ inline void to_json(json& j, const UserAuth& p)
 }
 inline bool from_json(const json& j, UserAuth& p)
 {
-    auto nameIt = j.find("name");
-    auto pwdIt = j.find("password");
+    try {
+        auto nameIt = j.find("name");
+        auto pwdIt = j.find("password");
 
-    if (nameIt != j.end() && pwdIt != j.end()) {
-        p.name = nameIt.value().get<std::string>();
-        p.password = pwdIt.value().get<std::string>();
-        return true;
+        if (nameIt != j.end() && pwdIt != j.end()) {
+            p.name = nameIt.value().get<std::string>();
+            p.password = pwdIt.value().get<std::string>();
+            return true;
+        }
+    } catch (...) {
     }
     return false;
 }
@@ -100,15 +110,18 @@ inline void to_json(json& j, const CommentInternal& p)
 }
 inline bool from_json(const json& j, CommentInternal& p)
 {
-    auto userIdIt = j.find("userId");
-    auto commentIdIt = j.find("commentId");
-    auto textIt = j.find("body");
+    try {
+        auto userIdIt = j.find("userId");
+        auto commentIdIt = j.find("commentId");
+        auto textIt = j.find("body");
 
-    if (userIdIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
-        p.userId = userIdIt.value().get<int32_t>();
-        p.commentId = commentIdIt.value().get<int32_t>();
-        p.body = textIt.value().get<std::string>();
-        return true;
+        if (userIdIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
+            p.userId = userIdIt.value().get<int32_t>();
+            p.commentId = commentIdIt.value().get<int32_t>();
+            p.body = textIt.value().get<std::string>();
+            return true;
+        }
+    } catch (...) {
     }
     return false;
 }
@@ -125,15 +138,18 @@ inline void to_json(json& j, const CommentExternal& p)
 }
 inline bool from_json(const json& j, CommentExternal& p)
 {
-    auto nameIt = j.find("name");
-    auto commentIdIt = j.find("commentId");
-    auto textIt = j.find("body");
+    try {
+        auto nameIt = j.find("name");
+        auto commentIdIt = j.find("commentId");
+        auto textIt = j.find("body");
 
-    if (nameIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
-        p.name = nameIt.value().get<std::string>();
-        p.commentId = commentIdIt.value().get<int32_t>();
-        p.body = textIt.value().get<std::string>();
-        return true;
+        if (nameIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
+            p.name = nameIt.value().get<std::string>();
+            p.commentId = commentIdIt.value().get<int32_t>();
+            p.body = textIt.value().get<std::string>();
+            return true;
+        }
+    } catch (...) {
     }
     return false;
 }

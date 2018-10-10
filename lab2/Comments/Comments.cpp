@@ -14,7 +14,7 @@ CreateComment::CreateComment(Model* _model)
 
 void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    json commentJson = json::parse(getRequestBody(request));
+    json commentJson = tryParsejson(getRequestBody(request));
     Comment comment;
     if (request.method() != "POST" or !from_json(commentJson, comment)) {
         response.setStatus(403);
@@ -36,7 +36,7 @@ LikeComment::LikeComment(Model* _model)
 
 void LikeComment::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json body = json::parse(getRequestBody(request));
+    json body = tryParsejson(getRequestBody(request));
     int32_t id = body["commentId"].get<int32_t>();
     if (request.method() != "POST" or !body.count("commentId")) {
         response.setStatus(403);
@@ -82,7 +82,7 @@ DeleteComments::DeleteComments(Model* _model)
 
 void DeleteComments::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json body = json::parse(getRequestBody(request));
+    json body = tryParsejson(getRequestBody(request));
     int32_t id = body["userId"].get<int32_t>();
     if (request.method() != "DELETE" or !body.count("userId")) {
         response.setStatus(403);

@@ -13,7 +13,7 @@ Login::Login(Model* _model)
 
 void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    json userAuthJson = json::parse(getRequestBody(request));
+    json userAuthJson = tryParsejson(getRequestBody(request));
     UserAuth userAuth;
     if (request.method() != "POST" or !from_json(userAuthJson, userAuth)) {
         response.setStatus(403);
@@ -35,8 +35,7 @@ Reg::Reg(Model* _model)
 
 void Reg::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    std::cout << "\n\nStart";
-    json userAuthJson = json::parse(getRequestBody(request));
+    json userAuthJson = tryParsejson(getRequestBody(request));
     UserAuth userAuth;
     if (request.method() != "POST" or !from_json(userAuthJson, userAuth)) {
         response.setStatus(403);
@@ -47,7 +46,6 @@ void Reg::handleRequest(const Http::Request& request, Http::Response& response)
     std::cout << "\nZZ" << newsResponse.empty() << newsResponse.size();
     if (newsResponse.empty()) {
         response.setStatus(500);
-        std::cout << "\nSTATUS";
         return;
     }
     response.out() << newsResponse.dump();
@@ -60,8 +58,7 @@ Del::Del(Model* _model)
 
 void Del::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json userIdJson = json::parse(getRequestBody(request));
-    UserAuth userAuth;
+    json userIdJson = tryParsejson(getRequestBody(request));
     auto userIdIt = userIdJson.find("userId");
     if (request.method() != "DELETE" or userIdIt == userIdJson.end()) {
         response.setStatus(403);
@@ -83,7 +80,7 @@ IncRating::IncRating(Model* _model)
 
 void IncRating::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json userIdJson = json::parse(getRequestBody(request));
+    json userIdJson = tryParsejson(getRequestBody(request));
     auto userIdIt = userIdJson.find("userId");
     if (request.method() != "POST" or userIdIt == userIdJson.end()) {
         response.setStatus(403);
@@ -105,7 +102,7 @@ GetUsername::GetUsername(Model* _model)
 
 void GetUsername::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json userIdJson = json::parse(getRequestBody(request));
+    json userIdJson = tryParsejson(getRequestBody(request));
     auto userIdIt = userIdJson.find("userId");
     if (request.method() != "POST" or userIdIt == userIdJson.end()) {
         response.setStatus(403);

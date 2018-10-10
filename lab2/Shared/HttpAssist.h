@@ -114,6 +114,16 @@ inline void writeHeaders(Wt::Http::Message& msg, const std::vector<Wt::Http::Mes
         msg.setHeader(headers[i].name(), headers[i].value());
     }
 }
+inline json tryParsejson(const std::string& body)
+{
+    json result;
+    try {
+        result = json::parse(body);
+    } catch (...) {
+        return json();
+    }
+    return result;
+}
 inline std::string getRequestBody(const Wt::Http::Request& request)
 {
     std::string body;
