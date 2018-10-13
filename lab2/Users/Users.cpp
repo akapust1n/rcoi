@@ -43,7 +43,6 @@ void Reg::handleRequest(const Http::Request& request, Http::Response& response)
     }
 
     json newsResponse = model->reg(userAuth.name, userAuth.password);
-    std::cout << "\nZZ" << newsResponse.empty() << newsResponse.size();
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;
@@ -95,26 +94,28 @@ void IncRating::handleRequest(const Http::Request& request, Http::Response& resp
     response.out() << newsResponse.dump();
 }
 
-GetUsername::GetUsername(Model* _model)
+GetUsernames::GetUsernames(Model* _model)
     : Base(_model)
 {
 }
 
-void GetUsername::handleRequest(const Http::Request& request, Http::Response& response)
+void GetUsernames::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json userIdJson = tryParsejson(getRequestBody(request));
-    auto userIdIt = userIdJson.find("userId");
-    if (request.method() != "POST" or userIdIt == userIdJson.end()) {
+    auto ids = request.getParameterValues("id");
+    if (request.method() != "GET") {
         response.setStatus(403);
         return;
     }
-
-    json newsResponse = model->incRating(userIdIt.value().get<int32_t>());
-    if (newsResponse.empty()) {
-        response.setStatus(500);
+    std::vector<int32_t> idsInt;
+    for (auto id : ids) {
+        idsInt.push_back(atoi(id.c_str()));
+    }
+    json comments = model->getNames(idsInt);
+    if (comments.empty()) {
+        response.out() << "Cant find names comments";
         return;
     }
-    response.out() << newsResponse.dump();
+    response.out() << comments.dump();
 }
 
 #ifdef IS_TEST_BUILD

@@ -15,6 +15,7 @@ const json Model::getTitles(int32_t page)
         db = Db::GetInst()->GetMysql();
 
     json result = json::array();
+
     auto req = db->prepareStatement("SELECT ID, title, UNIX_TIMESTAMP(creationDate) from News order by creationDate limit ? offset ?");
     req->bind(0, newsPerPage);
     req->bind(1, (page - 1) * newsPerPage);
@@ -67,7 +68,7 @@ const json Model::getNews(int32_t newsId)
         db = Db::GetInst()->GetMysql();
     json result;
 
-    auto req = db->prepareStatement("SELECT ID, title, UNIX_TIMESTAMP(creationDate) from News where ID=?");
+    auto req = db->prepareStatement("SELECT ID, title,body, UNIX_TIMESTAMP(creationDate) from News where ID=?");
     req->bind(0, newsId);
 
     if (!req) {
@@ -80,7 +81,8 @@ const json Model::getNews(int32_t newsId)
                 News news;
                 req->getResult(0, &news.ID);
                 req->getResult(1, &news.title, 255);
-                req->getResult(2, &news.timestamp);
+                req->getResult(2, &news.body, 255);
+                req->getResult(3, &news.timestamp);
                 result = news;
             };
         } catch (...) {

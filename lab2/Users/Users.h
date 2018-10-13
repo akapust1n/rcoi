@@ -37,9 +37,9 @@ protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
-class GetUsername : public Base {
+class GetUsernames : public Base {
 public:
-    GetUsername(Model* _model);
+    GetUsernames(Model* _model);
 
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);

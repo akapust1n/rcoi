@@ -57,7 +57,6 @@ CountComment::CountComment(Model* _model)
 
 void CountComment::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    std::string result;
     auto ids = request.getParameterValues("id");
     if (request.method() != "GET") {
         response.setStatus(403);
@@ -94,6 +93,11 @@ void DeleteComments::handleRequest(const Http::Request& request, Http::Response&
         return;
     }
     response.out() << result.dump();
+}
+
+GetComments::GetComments(Model* _model)
+    : Base(_model)
+{
 }
 
 void GetComments::handleRequest(const Http::Request& request, Http::Response& response)

@@ -12,6 +12,7 @@ public:
     Router()
         : getTitles(&model)
         , createNews(&model)
+        , getNews(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -21,6 +22,7 @@ public:
     {
         server.addResource(&getTitles, "/titles");
         server.addResource(&createNews, "/createNews");
+        server.addResource(&getNews, "/getnews");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -29,6 +31,7 @@ public:
 private:
     GetTitles getTitles;
     CreateNews createNews;
+    GetNews getNews;
     Model model;
 #ifdef IS_TEST_BUILD
     Clear clear;

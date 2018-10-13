@@ -125,7 +125,7 @@ const json Model::getComments(int32_t newsId, int32_t page)
     auto req = db->prepareStatement("SELECT ID,userId,body from Comments where newsId = ? limit ? offset ?");
     req->bind(0, newsId);
     req->bind(1, commentsPerPage);
-    req->bind(2, commentsPerPage * page);
+    req->bind(2, commentsPerPage * (page - 1));
 
     if (!req) {
         LOG_ERROR("Cant prepare statement");

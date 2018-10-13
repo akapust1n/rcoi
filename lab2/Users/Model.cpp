@@ -113,6 +113,39 @@ const json Model::incRating(int32_t userId)
     }
     return result;
 }
+
+const json Model::getNames(const std::vector<int32_t>& ids)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    json result;
+    for (auto id : ids) {
+        auto req = db->prepareStatement("SELECT name FROM Users WHERE ID=?;");
+        req->bind(0, id);
+
+        if (!req) {
+            LOG_ERROR("Cant prepare statement");
+        } else {
+            try {
+                req->execute();
+                LOG_INFO("Db request %s", req->sql().c_str());
+                if (req->nextRow()) {
+                    std::string name;
+                    req->getResult(0, &name, 255);
+                    json temp;
+                    temp["userId"] = id;
+                    temp["name"] = name;
+                    result.push_back(temp);
+                }
+
+            } catch (...) {
+                LOG_ERROR("Cant count comments");
+            }
+        };
+    }
+
+    return result;
+}
 #ifdef IS_TEST_BUILD
 const json Model::clear()
 {

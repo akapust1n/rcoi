@@ -65,6 +65,7 @@ void GetNews::handleRequest(const Http::Request& request, Http::Response& respon
     json news = model->getNews(newsId);
     if (news.empty()) {
         response.out() << "Cant find news";
+        response.setStatus(500);
         return;
     }
     response.out() << news.dump();

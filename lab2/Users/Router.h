@@ -14,6 +14,7 @@ public:
         , reg(&model)
         , del(&model)
         , incRating(&model)
+        , getUsernames(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -25,6 +26,8 @@ public:
         server.addResource(&reg, "/register");
         server.addResource(&del, "/delete");
         server.addResource(&incRating, "/incRating");
+        server.addResource(&getUsernames, "/names");
+
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -35,6 +38,7 @@ private:
     Reg reg;
     Del del;
     IncRating incRating;
+    GetUsernames getUsernames;
     Model model;
 #ifdef IS_TEST_BUILD
     Clear clear;

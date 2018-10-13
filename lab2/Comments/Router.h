@@ -14,6 +14,7 @@ public:
         , countComment(&model)
         , delComments(&model)
         , likeComment(&model)
+        , getComments(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -25,6 +26,7 @@ public:
         server.addResource(&countComment, "/count");
         server.addResource(&delComments, "/deleteByUser");
         server.addResource(&likeComment, "/like");
+        server.addResource(&getComments, "/getComments");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -35,6 +37,7 @@ private:
     CountComment countComment;
     DeleteComments delComments;
     LikeComment likeComment;
+    GetComments getComments;
     Model model;
 #ifdef IS_TEST_BUILD
     Clear clear;

@@ -128,17 +128,17 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
 {
     Wt::Http::Message result;
     json resultJson;
-    Wt::Http::Message getNews = getfromService(News, headers, params, "oneNews"); //title, body, creationDate
+    Wt::Http::Message getNews = getfromService(News, headers, params, "getnews"); //title, body, creationDate
     if (getNews.status() == 200) {
         writeHeaders(result, getNews.headers());
-        json newsJson = json::parse(getNews.body());
+        json newsJson = tryParsejson(getNews.body());
         resultJson["news"] = newsJson;
         json resultComments = json::array();
 
-        Wt::Http::Message getComments = getfromService(Comments, headers, params, "oneNews");
+        Wt::Http::Message getComments = getfromService(Comments, headers, params, "getComments");
         if (getComments.status() == 200) {
 
-            json commentsJson = json::parse(getComments.body());
+            json commentsJson = tryParsejson(getComments.body());
 
             std::string userIds;
             for (auto commentsIt = commentsJson.cbegin(); commentsIt != commentsJson.cend(); ++commentsIt) {
@@ -151,8 +151,8 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
                 userIds.erase(userIds.end() - 1); //remove last &
 
             Wt::Http::Message getUsernames = getfromService(Users, headers, userIds, "names");
-            if (getUsernames.status() == 200) {
-                json names = json::parse(getUsernames.body());
+            if (getUsernames.status() == 200 or userIds.empty()) {
+                json names = tryParsejson(getUsernames.body());
                 std::map<int32_t, std::string> userIdtoName;
 
                 for (auto name : names) {
@@ -163,11 +163,12 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
                     CommentExternal ce;
                     ce.body = (*commentsIt)["body"].get<std::string>();
                     ce.commentId = (*commentsIt)["commentId"].get<int32_t>();
-                    ce.name = userIds[(*commentsIt)["userId"].get<int32_t>()];
+                    ce.name = userIdtoName[(*commentsIt)["userId"].get<int32_t>()];
                     resultComments.push_back(ce);
                 }
                 resultJson["comments"] = resultComments;
                 result.addBodyText(resultJson.dump());
+                result.setStatus(200);
             } else {
                 LOG_ERROR("User service error");
                 result.setStatus(getUsernames.status());

@@ -14,6 +14,7 @@ public:
     const json login(const std::string& name, const std::string& pwd);
     const json del(int32_t userId);
     const json incRating(int32_t userId);
+    const json getNames(const std::vector<int32_t>& ids);
 #ifdef IS_TEST_BUILD
     const json clear();
 #endif

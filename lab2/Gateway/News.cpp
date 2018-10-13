@@ -27,16 +27,16 @@ void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Respo
     writeOutput(msg, response);
 }
 
-    //OneNews::OneNews(Model* _model)
-    //    : Base(_model)
-    //{
-    //}
+OneNews::OneNews(Model* _model)
+    : Base(_model)
+{
+}
 
-    //void OneNews::handleRequest(const Http::Request& request, Http::Response& response)
-    //{
-    //    const Wt::Http::Message msg = model->getOneNews(request.headers(), request.queryString());
-    //    writeOutput(msg, response);
-    //}
+void OneNews::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    const Wt::Http::Message msg = model->getOneNews(request.headers(), request.queryString());
+    writeOutput(msg, response);
+}
 
 #ifdef IS_TEST_BUILD
 

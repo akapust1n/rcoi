@@ -15,7 +15,6 @@ bool runServer()
     if (serverIsAlive)
         return serverIsAlive;
 
-    Model model;
     int argc = 7;
     char* argv[7];
     argv[0] = "./tests";
@@ -35,7 +34,6 @@ bool runServer()
     }
     serverIsAlive = true;
     HttpAssist::Client client;
-    std::cout << "\nDATABASE2:" << Db::GetInst()->GetMysql();
     client.get("http://localhost:8080/clear");
     client.waitDone();
 
@@ -119,6 +117,14 @@ TEST(Gateway, News)
     client.waitDone();
     json resultGetTitle = json::parse(client.message().body());
     ASSERT_EQ(resultGetTitle.size(), 10);
+
+    //ONENEWS_TEST
+    client.get(fmt::format("http://localhost:8080/oneNews?newsId={0}&page={1}", newsId, 1));
+    client.waitDone();
+    json resultGetOneNews = json::parse(client.message().body());
+    json newsObject = resultGetOneNews["news"];
+    std::cout << "ZZZZZZZZZZZZ" << newsObject.dump();
+    ASSERT_EQ(newsObject["ID"].get<int32_t>(), newsId);
 
     client.get("http://localhost:8080/clear");
     client.waitDone();

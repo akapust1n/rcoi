@@ -1,4 +1,11 @@
 ## GET
+> oneNews
+
+Params: newsId
+
+Desc: Get one news with comments(every comment contain username)
+
+Return codes: 200,403,500
 
 > titles
 
@@ -56,16 +63,6 @@ Return codes: 200,403,500
 Params: userId
 
 Desc: Delete user(и все его комменты)
-
-Return codes: 200,403,500
-
-###TODO
-###GET
-> oneNews
-
-Params: newsId
-
-Desc: Get one news with comments(every comment contain username)
 
 Return codes: 200,403,500
 

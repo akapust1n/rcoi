@@ -18,6 +18,7 @@ public:
         , reg(&model)
         , delUser(&model)
         , createNews(&model)
+        , oneNews(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -32,6 +33,7 @@ public:
         server.addResource(&delUser, "/delete");
         server.addResource(&createNews, "/createNews");
         server.addResource(&reg, "/register");
+        server.addResource(&oneNews, "/oneNews");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -45,6 +47,7 @@ private:
     Register reg;
     DelUser delUser;
     CreateNews createNews;
+    OneNews oneNews;
     Model model;
 #ifdef IS_TEST_BUILD
     Clear clear;
