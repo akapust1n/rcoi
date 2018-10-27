@@ -11,6 +11,10 @@ GetTitles::GetTitles(Model* _model)
 
 void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
+    if (request.method() == "OPTIONS") { //will be delete after debug
+        response.setStatus(200);
+        return;
+    }
     const Wt::Http::Message msg = model->getTitles(request.headers(), request.queryString());
     writeOutput(msg, response);
 }
@@ -22,6 +26,10 @@ CreateNews::CreateNews(Model* _model)
 
 void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
+    if (request.method() == "OPTIONS") { //will be delete after debug
+        response.setStatus(200);
+        return;
+    }
     const std::string body = getRequestBody(request);
     const Wt::Http::Message& msg = model->createNews(request.headers(), body);
     writeOutput(msg, response);
@@ -34,6 +42,10 @@ OneNews::OneNews(Model* _model)
 
 void OneNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (request.method() == "OPTIONS") { //will be delete after debug
+        response.setStatus(200);
+        return;
+    }
     const Wt::Http::Message msg = model->getOneNews(request.headers(), request.queryString());
     writeOutput(msg, response);
 }
