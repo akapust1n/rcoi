@@ -38,11 +38,12 @@ struct Title {
     int32_t ID = 0;
     std::string title;
     int32_t count = 0;
+    long long timestamp;
 };
 
 inline void to_json(json& j, const Title& p)
 {
-    j = json{ { "ID", p.ID }, { "title", p.title }, { "count", p.count } };
+    j = json{ { "ID", p.ID }, { "title", p.title }, { "count", p.count }, { "timestamp", p.timestamp } };
 }
 
 struct Comment {
@@ -102,11 +103,12 @@ struct CommentInternal {
     int32_t commentId;
     int32_t userId;
     std::string body;
+    int32_t rating;
 };
 
 inline void to_json(json& j, const CommentInternal& p)
 {
-    j = json{ { "userId", p.userId }, { "commentId", p.commentId }, { "body", p.body } };
+    j = json{ { "userId", p.userId }, { "commentId", p.commentId }, { "body", p.body }, { "rating", p.rating } };
 }
 inline bool from_json(const json& j, CommentInternal& p)
 {
@@ -114,11 +116,13 @@ inline bool from_json(const json& j, CommentInternal& p)
         auto userIdIt = j.find("userId");
         auto commentIdIt = j.find("commentId");
         auto textIt = j.find("body");
+        auto ratingIt = j.find("rating");
 
-        if (userIdIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
+        if (userIdIt != j.end() && commentIdIt != j.end() && textIt != j.end() && ratingIt != j.cend()) {
             p.userId = userIdIt.value().get<int32_t>();
             p.commentId = commentIdIt.value().get<int32_t>();
             p.body = textIt.value().get<std::string>();
+            p.rating = ratingIt.value().get<int32_t>();
             return true;
         }
     } catch (...) {
@@ -130,11 +134,12 @@ struct CommentExternal {
     int32_t commentId;
     std::string name;
     std::string body;
+    int32_t rating;
 };
 
 inline void to_json(json& j, const CommentExternal& p)
 {
-    j = json{ { "commentId", p.commentId }, { "name", p.name }, { "body", p.body } };
+    j = json{ { "commentId", p.commentId }, { "name", p.name }, { "body", p.body }, { "rating", p.rating } };
 }
 inline bool from_json(const json& j, CommentExternal& p)
 {
@@ -142,11 +147,14 @@ inline bool from_json(const json& j, CommentExternal& p)
         auto nameIt = j.find("name");
         auto commentIdIt = j.find("commentId");
         auto textIt = j.find("body");
+        auto ratingIt = j.find("rating");
 
-        if (nameIt != j.end() && commentIdIt != j.end() && textIt != j.end()) {
+        if (nameIt != j.end() && commentIdIt != j.end() && textIt != j.end() && ratingIt != j.cend()) {
             p.name = nameIt.value().get<std::string>();
             p.commentId = commentIdIt.value().get<int32_t>();
             p.body = textIt.value().get<std::string>();
+            p.rating = ratingIt.value().get<int32_t>();
+
             return true;
         }
     } catch (...) {

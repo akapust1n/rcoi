@@ -106,7 +106,8 @@ const json Model::likeComment(int32_t commentId)
     } else {
         try {
             req->execute();
-            result["result"] = "rating is updated!";
+            result["result"] = ""
+                               "rating is updated!";
         } catch (...) {
             LOG_ERROR("Cant like comment!");
         }
@@ -122,7 +123,7 @@ const json Model::getComments(int32_t newsId, int32_t page)
 
     json result = json::array();
 
-    auto req = db->prepareStatement("SELECT ID,userId,body from Comments where newsId = ? limit ? offset ?");
+    auto req = db->prepareStatement("SELECT ID,userId,body,rating from Comments where newsId = ? limit ? offset ?");
     req->bind(0, newsId);
     req->bind(1, commentsPerPage);
     req->bind(2, commentsPerPage * (page - 1));
@@ -138,6 +139,7 @@ const json Model::getComments(int32_t newsId, int32_t page)
                 req->getResult(0, &ci.commentId);
                 req->getResult(1, &ci.userId);
                 req->getResult(2, &ci.body, 255);
+                req->getResult(3, &ci.rating);
                 result.push_back(ci);
             };
         } catch (...) {

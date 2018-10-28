@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
 import _parseJSON from "../../HttpAssist"
+import './style.css'
 
 export default class Login extends Component {
     constructor(props) {
@@ -26,7 +27,7 @@ export default class Login extends Component {
     handleSubmit = event => {
         event.preventDefault();
         const title = this.state.title;
-        const body = this.state.password;
+        const body = this.state.body;
         const data = JSON.stringify({
             title: title,
             body: body,

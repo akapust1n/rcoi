@@ -16,7 +16,7 @@ const json Model::getTitles(int32_t page)
 
     json result = json::array();
 
-    auto req = db->prepareStatement("SELECT ID, title, UNIX_TIMESTAMP(creationDate) from News order by creationDate limit ? offset ?");
+    auto req = db->prepareStatement("SELECT ID, title, UNIX_TIMESTAMP(creationDate) from News order by creationDate desc limit ? offset ?");
     req->bind(0, newsPerPage);
     req->bind(1, (page - 1) * newsPerPage);
 
@@ -27,7 +27,6 @@ const json Model::getTitles(int32_t page)
         LOG_INFO("Db request %s", req->sql().c_str());
         while (req->nextRow()) {
             News news;
-            std::cout << "\nzzz\n";
             req->getResult(0, &news.ID);
             req->getResult(1, &news.title, 255);
             req->getResult(2, &news.timestamp);

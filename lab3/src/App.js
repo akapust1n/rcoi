@@ -3,14 +3,20 @@ import { Navbar, NavItem, Nav, Grid, Row, Col } from "react-bootstrap";
 import Login from "./components/Login"
 import Register from "./components/Register"
 import CreateNews from "./components/CreateNews"
+import Titles from "./components/Titles"
+import ArticleFull from "./components/ArticleFull"
 
 
 const ROUTES = [
   { name: "login" },
   { name: "register" },
   { name: "create news" },
-
+  { name: "last news" },
 ]
+
+export const SecondRoutes = {
+  fullArticle: ROUTES.length
+};
 
 
 class App extends Component {
@@ -19,8 +25,21 @@ class App extends Component {
     this.state = {
       route: 0
     };
+    this.handleClick = this.handleClick.bind(this);
   }
+
+  handleClick(param1, param2) {
+    console.log(this.state.route);
+    console.log("new rout ", param1);
+    this.setState({
+      route: param1,
+      articleId: param2
+    });
+  }
+
+
   render() {
+    console.log('render', this.state.route);
     const route = this.state.route;
     let mainPart;
     switch (route) {
@@ -32,6 +51,12 @@ class App extends Component {
         break;
       case 2:
         mainPart = <CreateNews />
+        break;
+      case 3:
+        mainPart = <Titles handleClick={this.handleClick} />
+        break;
+      case 4:
+        mainPart = <ArticleFull id={this.state.articleId} />
         break;
       default:
         mainPart = <Login />

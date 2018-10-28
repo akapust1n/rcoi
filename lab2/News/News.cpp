@@ -14,7 +14,6 @@ GetTitles::GetTitles(Model* _model)
 void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
     int32_t page = extractPositiveParam(request, "page");
-    std::cout << page << std::endl;
     if (request.method() != "GET" or page < 0) {
         response.setStatus(403);
         return;

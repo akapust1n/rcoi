@@ -44,11 +44,14 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
     if (msg.status() == 200) {
         json titles = json::parse(msg.body()); //trust that json is valid
         std::string newsIds;
-        std::map<int32_t, std::string> titlesMap;
+        std::map<int32_t, Title> titlesMap;
         for (auto newsIt = titles.cbegin(); newsIt != titles.cend(); ++newsIt) {
             const int32_t ID = (*newsIt)["ID"].get<int32_t>();
             newsIds += std::string("id=") + std::to_string(ID) + "&";
-            titlesMap[ID] = (*newsIt)["title"].get<std::string>();
+            Title title;
+            title.title = (*newsIt)["title"].get<std::string>();
+            title.timestamp = (*newsIt)["timestamp"].get<long long>();
+            titlesMap[ID] = title;
         }
         if (newsIds.begin() != newsIds.end())
             newsIds.erase(newsIds.end() - 1); //remove last &
@@ -60,8 +63,9 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
             for (auto countIt = countComments.cbegin(); countIt != countComments.cend(); ++countIt) {
                 Title title;
                 title.ID = (*countIt)["id"].get<int32_t>();
-                title.title = titlesMap[title.ID];
+                title.title = titlesMap[title.ID].title;
                 title.count = (*countIt)["count"].get<int32_t>();
+                title.timestamp = titlesMap[title.ID].timestamp;
                 if (!title.title.empty()) {
                     json titleJson = title;
                     titlesArray.push_back(titleJson);
@@ -102,7 +106,6 @@ const Http::Message Model::login(const std::vector<Http::Message::Header>& heade
 const Http::Message Model::reg(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
     Wt::Http::Message result = postToService(Users, headers, body, "register");
-    std::cout << "RESULT: " << result.status();
     return result;
 }
 
@@ -164,6 +167,7 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
                     ce.body = (*commentsIt)["body"].get<std::string>();
                     ce.commentId = (*commentsIt)["commentId"].get<int32_t>();
                     ce.name = userIdtoName[(*commentsIt)["userId"].get<int32_t>()];
+                    ce.rating = (*commentsIt)["rating"].get<int32_t>();
                     resultComments.push_back(ce);
                 }
                 resultJson["comments"] = resultComments;
