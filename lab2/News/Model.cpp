@@ -11,6 +11,7 @@ Model::Model()
 
 const json Model::getTitles(int32_t page)
 {
+    std::lock_guard<std::mutex> guard(mutex);
     if (!db)
         db = Db::GetInst()->GetMysql();
 
@@ -75,7 +76,7 @@ const json Model::getNews(int32_t newsId)
     } else {
         try {
             req->execute();
-            LOG_INFO("Db request %s", req->sql().c_str());
+            LOG_INFO("Db request %s newsId %d", req->sql().c_str(), newsId);
             if (req->nextRow()) {
                 News news;
                 req->getResult(0, &news.ID);
@@ -85,7 +86,7 @@ const json Model::getNews(int32_t newsId)
                 result = news;
             };
         } catch (...) {
-            LOG_INFO("Cant insert news!");
+            LOG_INFO("Cant find news news!");
         }
     };
 

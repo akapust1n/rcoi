@@ -27,7 +27,6 @@ public:
     const Wt::Http::Message del(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message like(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message getOneNews(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
-    const Wt::Http::Message rating(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
 #ifdef IS_TEST_BUILD
     const Wt::Http::Message clear(const std::vector<Wt::Http::Message::Header>& headers);
 #endif

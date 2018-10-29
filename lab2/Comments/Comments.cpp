@@ -45,6 +45,7 @@ void LikeComment::handleRequest(const Http::Request& request, Http::Response& re
     json likeResult = model->likeComment(id);
     if (likeResult.empty()) {
         response.out() << "Cant like comment";
+        response.setStatus(500);
         return;
     }
     response.out() << likeResult.dump();
@@ -69,6 +70,7 @@ void CountComment::handleRequest(const Http::Request& request, Http::Response& r
     json comments = model->countComments(idsInt);
     if (comments.empty()) {
         response.out() << "Cant count comments";
+        response.setStatus(200);
         return;
     }
     response.out() << comments.dump();
@@ -90,6 +92,7 @@ void DeleteComments::handleRequest(const Http::Request& request, Http::Response&
     json result = model->deleteComments(id);
     if (result.empty()) {
         response.out() << "Cant delete comments";
+        response.setStatus(500);
         return;
     }
     response.out() << result.dump();
@@ -110,7 +113,8 @@ void GetComments::handleRequest(const Http::Request& request, Http::Response& re
     }
     json news = model->getComments(newsId, page);
     if (news.empty()) {
-        response.out() << "Cant find news";
+        response.out() << "Cant find comments";
+        response.setStatus(200);
         return;
     }
     response.out() << news.dump();

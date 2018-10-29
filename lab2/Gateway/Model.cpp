@@ -168,6 +168,7 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
                     ce.commentId = (*commentsIt)["commentId"].get<int32_t>();
                     ce.name = userIdtoName[(*commentsIt)["userId"].get<int32_t>()];
                     ce.rating = (*commentsIt)["rating"].get<int32_t>();
+                    ce.userId = (*commentsIt)["userId"].get<int32_t>();
                     resultComments.push_back(ce);
                 }
                 resultJson["comments"] = resultComments;

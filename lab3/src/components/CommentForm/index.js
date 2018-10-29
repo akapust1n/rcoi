@@ -1,39 +1,39 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
-import { _parseJSON } from "../../HttpAssist"
-import './style.css'
+import _parseJSON from "../../HttpAssist"
 
-export default class Login extends Component {
+export default class CommentFrom extends Component {
     constructor(props) {
         super(props);
+        this.userId = this.props.userId;
+        this.newsId = this.props.newsId;
+        this.postComment = this.props.postComment;
 
         this.state = {
-            title: "",
-            body: "",
+            body: ""
         };
-        this.url = "http://localhost:8080/createNews";
+        this.url = "http://localhost:8080/comment";
     }
 
     validateForm() {
-        return this.state.title.length > 0 && this.state.body.length > 0;
+        return this.state.body.length > 0;
     }
 
-    handleChange(event) {
+    handleChange = event => {
         this.setState({
             [event.target.id]: event.target.value
         });
     }
 
-
     handleSubmit = event => {
         event.preventDefault();
-        const title = this.state.title;
         const body = this.state.body;
         const data = JSON.stringify({
-            title: title,
-            body: body,
+            userId: this.userId,
+            text: body,
+            newsId: this.newsId
         });
-
+        console.log(data);
         fetch(this.url, {
             method: 'POST',
             mode: 'cors',
@@ -43,47 +43,38 @@ export default class Login extends Component {
             body: data,
         }).then(res => {
             if (res.status === 200) {
-                return _parseJSON(res);
+                this.setState({ body: "" });
+                this.postComment();
             } else {
                 throw new Error();
             }
-        }).then(json => { alert("News was created!"); })
-            .catch((error) => {
-                alert("Cant create news!");
-            })
+        }).catch((error) => {
+            alert("Cant create news!");
+        })
     }
 
     render() {
         return (
             <Col md={6} sm={6} >
-                <div className="CreateNews">
+                <div className="CreateComment">
                     <form>
-                        <FormGroup controlId="title" >
-                            <ControlLabel>Title</ControlLabel>
-                            <FormControl
-                                autoFocus
-                                type="text"
-                                value={this.state.title}
-                                onChange={this.handleChange}
-                            />
-                        </FormGroup>
                         <FormGroup controlId="body" >
-                            <ControlLabel>Body</ControlLabel>
                             <FormControl
                                 value={this.state.body}
                                 onChange={this.handleChange}
                                 componentClass="textarea"
                                 className="textBody"
-                                rows="10"
+                                rows="2"
+                                placeholder="Your comment"
                             />
                         </FormGroup>
                         <Button
                             block
-                            bsSize="large"
+                            bsSize="sm"
                             disabled={!this.validateForm()}
                             onClick={this.handleSubmit}
                         >
-                            Create News
+                            Comment
             </Button>
                     </form>
                 </div>

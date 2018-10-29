@@ -123,7 +123,7 @@ const json Model::getComments(int32_t newsId, int32_t page)
 
     json result = json::array();
 
-    auto req = db->prepareStatement("SELECT ID,userId,body,rating from Comments where newsId = ? limit ? offset ?");
+    auto req = db->prepareStatement("SELECT ID,userId,body,rating from Comments where newsId = ? order by creationData desc limit ? offset ?");
     req->bind(0, newsId);
     req->bind(1, commentsPerPage);
     req->bind(2, commentsPerPage * (page - 1));

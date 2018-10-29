@@ -41,7 +41,10 @@ void Reg::handleRequest(const Http::Request& request, Http::Response& response)
         response.setStatus(403);
         return;
     }
-
+    if (userAuth.name.size() < 3 or userAuth.password.size()) {
+        response.setStatus(403);
+        return;
+    }
     json newsResponse = model->reg(userAuth.name, userAuth.password);
     if (newsResponse.empty()) {
         response.setStatus(500);

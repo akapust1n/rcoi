@@ -135,11 +135,12 @@ struct CommentExternal {
     std::string name;
     std::string body;
     int32_t rating;
+    int32_t userId;
 };
 
 inline void to_json(json& j, const CommentExternal& p)
 {
-    j = json{ { "commentId", p.commentId }, { "name", p.name }, { "body", p.body }, { "rating", p.rating } };
+    j = json{ { "commentId", p.commentId }, { "name", p.name }, { "body", p.body }, { "rating", p.rating }, { "userId", p.userId } };
 }
 inline bool from_json(const json& j, CommentExternal& p)
 {
@@ -148,13 +149,15 @@ inline bool from_json(const json& j, CommentExternal& p)
         auto commentIdIt = j.find("commentId");
         auto textIt = j.find("body");
         auto ratingIt = j.find("rating");
+        auto userIdIt = j.find("userId");
 
-        if (nameIt != j.end() && commentIdIt != j.end() && textIt != j.end() && ratingIt != j.cend()) {
+        if (nameIt != j.end() && commentIdIt != j.end() && textIt != j.end()
+            && ratingIt != j.cend() && userIdIt != j.cend()) {
             p.name = nameIt.value().get<std::string>();
             p.commentId = commentIdIt.value().get<int32_t>();
             p.body = textIt.value().get<std::string>();
             p.rating = ratingIt.value().get<int32_t>();
-
+            p.userId = userIdIt.value().get<int32_t>();
             return true;
         }
     } catch (...) {

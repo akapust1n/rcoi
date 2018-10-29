@@ -4,6 +4,7 @@
 #include "../Shared/HttpAssist.h"
 #include <Wt/Http/Client>
 #include <Wt/Http/Response>
+#include <mutex>
 #include <string>
 using nlohmann::json;
 
@@ -20,6 +21,7 @@ private:
     Model(const Model&) = delete;
     Dbo::backend::MySQL* db;
     const int32_t newsPerPage = 10;
+    std::mutex mutex;
 };
 
 #endif // MODEL_H
