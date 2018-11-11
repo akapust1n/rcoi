@@ -57,4 +57,16 @@ create database lab2CommentsTest;
 use lab2CommentsTest;
 CREATE TABLE Comments LIKE lab2Comments.Comments;
 
+drop database if exists lab2LikeHistory;
+create database lab2LikeHistory;
+use lab2LikeHistory;
+CREATE TABLE IF NOT EXISTS LikeHistory (
+    ID  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    commentId INT NOT NULL,
+    userId INT NOT NULL,
+    creationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY(commentId, userId)
+)  ENGINE=INNODB;
+INSERT INTO LikeHistory(commentId, userId) VALUES(1,  1);
+
 

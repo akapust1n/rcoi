@@ -45,6 +45,13 @@ protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
 
+class GetCommentsById : public Base {
+public:
+    GetCommentsById(Model* _model);
+
+protected:
+    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+};
 #ifdef IS_TEST_BUILD
 class Clear : public Base {
 public:

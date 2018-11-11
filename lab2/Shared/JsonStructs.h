@@ -164,6 +164,42 @@ inline bool from_json(const json& j, CommentExternal& p)
     }
     return false;
 }
+struct LikeEntity {
+    int32_t commentId;
+    int32_t userId;
+    long long timestamp;
+};
+
+inline void to_json(json& j, const LikeEntity& p)
+{
+    j = json{ { "commentId", p.commentId }, { "userId", p.userId }, { "timestamp", p.timestamp } };
+}
+
+inline bool from_json(const json& j, LikeEntity& p)
+{
+    try {
+        auto commentIdIt = j.find("commentId");
+        auto userIdIt = j.find("userId");
+        if (commentIdIt != j.cend() && userIdIt != j.cend()) {
+            p.commentId = commentIdIt.value().get<int32_t>();
+            p.userId = userIdIt.value().get<int32_t>();
+            return true;
+        }
+    } catch (...) {
+    }
+
+    return false;
+}
+struct LikeEntityExternal {
+    std::string comment;
+    std::string name;
+    long long timestamp;
+};
+
+inline void to_json(json& j, const LikeEntityExternal& p)
+{
+    j = json{ { "comment", p.comment }, { "name", p.name }, { "timestamp", p.timestamp } };
+}
 }
 
 #endif // JsonStructs_H

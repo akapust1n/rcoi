@@ -16,9 +16,9 @@ export default class ArticleFull extends Component {
         this.page = 1;
         this.noComments = false;
         this.url = `http://localhost:8080/oneNews?newsId=${props.id}&page=`;
-        //this.postComment = this.postComment.bind(this);
-        //  this.nextPage = this.nextPage.bind(this);
-        //this.prevPage = this.prevPage.bind(this);
+        this.postComment = this.postComment.bind(this);
+        this.nextPage = this.nextPage.bind(this);
+        this.prevPage = this.prevPage.bind(this);
     }
 
     componentDidMount() {

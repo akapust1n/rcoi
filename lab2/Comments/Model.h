@@ -15,6 +15,7 @@ public:
     const json deleteComments(int32_t userId);
     const json likeComment(int32_t commentId);
     const json getComments(int32_t newsId, int32_t page);
+    const json getCommentsById(const std::vector<int32_t>& ids);
 #ifdef IS_TEST_BUILD
     const json clear();
 #endif

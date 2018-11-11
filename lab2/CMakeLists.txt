@@ -73,3 +73,12 @@ file(GLOB tests_SRC
 add_executable(tests ${tests_SRC} ${gateway_SRC} ${shared_SRC} ${3rdpart_SRC})
 target_link_libraries(tests ${CONAN_LIBS} mysqlclient)
 
+
+file(GLOB likehistory_SRC
+    "./LikeHistory/*.h"
+    "./LikeHistory/*.cpp"
+)
+
+add_executable(likehistory ${likehistory_SRC} ${shared_SRC} ${3rdpart_SRC})
+target_link_libraries(likehistory ${CONAN_LIBS}  mysqlclient)
+

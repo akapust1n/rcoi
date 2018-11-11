@@ -150,6 +150,36 @@ const json Model::getComments(int32_t newsId, int32_t page)
     return result;
 }
 
+const json Model::getCommentsById(const std::vector<int32_t>& ids)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    json result;
+    for (auto id : ids) {
+        auto req = db->prepareStatement("SELECT ID,body FROM Comments WHERE ID=?;");
+        req->bind(0, id);
+
+        if (!req) {
+            LOG_ERROR("Cant prepare statement");
+        } else {
+            try {
+                CommentInternal ci;
+                req->execute();
+                LOG_INFO("Db request %s", req->sql().c_str());
+                req->nextRow();
+                req->getResult(0, &ci.commentId);
+                req->getResult(1, &ci.body, 255);
+                result.push_back(ci);
+
+            } catch (...) {
+                LOG_ERROR("Cant count comments");
+            }
+        };
+    }
+
+    return result;
+}
+
 #ifdef IS_TEST_BUILD
 const json Model::clear()
 {

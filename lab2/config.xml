@@ -3,6 +3,8 @@
     <newstestdb>lab2NewsTest</newstestdb>
     <usersreleasedb>lab2Users</usersreleasedb>
     <userstestdb>lab2UsersTest</userstestdb>
-    <commentsreleasedb>lab2Comments</commentreleasedb>
+    <commentsreleasedb>lab2Comments</commenstreleasedb>
     <commentstestdb>lab2CommentsTest</commentstestdb>
+    <likehistoryreleasedb>lab2LikeHistory</likehistoryreleasedb>
+    <likehistorytestdb>lab2LikeHistory</likehistorytestdb>
 </settings>

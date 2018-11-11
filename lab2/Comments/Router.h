@@ -15,6 +15,7 @@ public:
         , delComments(&model)
         , likeComment(&model)
         , getComments(&model)
+        , getCommentsById(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -27,6 +28,7 @@ public:
         server.addResource(&delComments, "/deleteByUser");
         server.addResource(&likeComment, "/like");
         server.addResource(&getComments, "/getComments");
+        server.addResource(&getCommentsById, "/commentsById");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -38,6 +40,7 @@ private:
     DeleteComments delComments;
     LikeComment likeComment;
     GetComments getComments;
+    GetCommentsById getCommentsById;
     Model model;
 #ifdef IS_TEST_BUILD
     Clear clear;

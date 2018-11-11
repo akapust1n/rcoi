@@ -12,6 +12,7 @@ export default class Login extends Component {
             body: "",
         };
         this.url = "http://localhost:8080/createNews";
+        this.handleChange = this.handleChange.bind(this);
     }
 
     validateForm() {
@@ -47,10 +48,15 @@ export default class Login extends Component {
             } else {
                 throw new Error();
             }
-        }).then(json => { alert("News was created!"); })
-            .catch((error) => {
-                alert("Cant create news!");
+        }).then(json => {
+            alert("News was created!");
+            this.setState({
+                title: "",
+                body: "",
             })
+        }).catch((error) => {
+            alert("Cant create news!");
+        })
     }
 
     render() {

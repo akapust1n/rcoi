@@ -11,7 +11,6 @@ Model::Model()
 
 const json Model::getTitles(int32_t page)
 {
-    std::lock_guard<std::mutex> guard(mutex);
     if (!db)
         db = Db::GetInst()->GetMysql();
 
@@ -67,9 +66,12 @@ const json Model::getNews(int32_t newsId)
     if (!db)
         db = Db::GetInst()->GetMysql();
     json result;
-
+    std::cout << "BEFORE PREPARED STATEMENT" << std::endl;
     auto req = db->prepareStatement("SELECT ID, title,body, UNIX_TIMESTAMP(creationDate) from News where ID=?");
+    std::cout << "AFTER AFTER STATEMENT" << std::endl;
+
     req->bind(0, newsId);
+    std::cout << "ADTER BIND" << std::endl;
 
     if (!req) {
         LOG_ERROR("Cant prepare statement");

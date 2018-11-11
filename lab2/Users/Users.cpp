@@ -41,7 +41,7 @@ void Reg::handleRequest(const Http::Request& request, Http::Response& response)
         response.setStatus(403);
         return;
     }
-    if (userAuth.name.size() < 3 or userAuth.password.size()) {
+    if (userAuth.name.size() < 1 or !userAuth.password.size()) {
         response.setStatus(403);
         return;
     }

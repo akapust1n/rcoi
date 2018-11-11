@@ -1,6 +1,7 @@
 #ifndef ROUTER_H
 #define ROUTER_H
 #include "Comments.h"
+#include "LikeHistory.h"
 #include "News.h"
 #include "Users.h"
 #include <Wt/WResource>
@@ -19,6 +20,7 @@ public:
         , delUser(&model)
         , createNews(&model)
         , oneNews(&model)
+        , history(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -34,6 +36,7 @@ public:
         server.addResource(&createNews, "/createNews");
         server.addResource(&reg, "/register");
         server.addResource(&oneNews, "/oneNews");
+        server.addResource(&history, "/history");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -49,6 +52,7 @@ private:
     CreateNews createNews;
     OneNews oneNews;
     Model model;
+    History history;
 #ifdef IS_TEST_BUILD
     Clear clear;
 #endif

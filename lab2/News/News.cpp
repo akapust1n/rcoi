@@ -2,7 +2,7 @@
 #include "../Shared/HttpAssist.h"
 #include "../Shared/JsonStructs.h"
 #include "Model.h"
-
+#include <iostream>
 using namespace ns;
 using namespace HttpAssist;
 
@@ -40,6 +40,10 @@ void CreateNews::handleRequest(const Http::Request& request, Http::Response& res
         response.setStatus(403);
         return;
     }
+    if (news.title.size() < 1 or news.body.size() < 1) {
+        response.setStatus(403);
+        return;
+    }
 
     json newsResponse = model->createNews(news.title, news.body);
     if (newsResponse.empty()) {
@@ -56,12 +60,17 @@ GetNews::GetNews(Model* _model)
 
 void GetNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    std::cout << "BEFORE GET NEWS" << std::endl;
     int32_t newsId = extractPositiveParam(request, "newsId");
+    std::cout << "AFTER GET NEWS " << newsId << std::endl;
     if (request.method() != "GET" or newsId < 0) {
         response.setStatus(403);
         return;
     }
+    std::cout << "BEFORE GET MODEL" << std::endl;
     json news = model->getNews(newsId);
+    std::cout << "AFTER GET MODEL" << std::endl;
+
     if (news.empty()) {
         response.out() << "Cant find news";
         response.setStatus(500);

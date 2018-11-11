@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
 import { _parseJSON } from "../../HttpAssist"
+import './style.css'
 
 export default class Login extends Component {
     constructor(props) {

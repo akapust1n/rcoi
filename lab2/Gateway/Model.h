@@ -4,6 +4,7 @@
 #include <Wt/Http/Client>
 #include <Wt/Http/Response>
 #include <array>
+#include <mutex>
 #include <string>
 
 class Model {
@@ -11,6 +12,7 @@ class Model {
         News = 0,
         Comments,
         Users,
+        LikeHistory,
 
         ServiceCount
     };
@@ -27,6 +29,7 @@ public:
     const Wt::Http::Message del(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message like(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message getOneNews(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
+    const Wt::Http::Message history(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
 #ifdef IS_TEST_BUILD
     const Wt::Http::Message clear(const std::vector<Wt::Http::Message::Header>& headers);
 #endif
@@ -36,7 +39,7 @@ private:
     const Http::Message postToService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);
 
 private:
-    std::array<std::string, ServiceCount> skServicePaths = { HttpAssist::skUrlNews, HttpAssist::skUrlComments, HttpAssist::skUrlUsers };
+    std::array<std::string, ServiceCount> skServicePaths = { HttpAssist::skUrlNews, HttpAssist::skUrlComments, HttpAssist::skUrlUsers, HttpAssist::skUrlLikeHistory };
 };
 
 #endif // MODEL_H

@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import Article from '../Article'
 import { _parseJSON, isEmpty } from "../../HttpAssist"
 import { Pager } from "react-bootstrap"
+import LikedEntity from '../LikedEntity';
 
-export default class Titles extends Component {
+export default class History extends Component {
     constructor(props) {
         super(props);
         this.handleClick = props.handleClick;
@@ -12,7 +12,7 @@ export default class Titles extends Component {
             page: 1
         };
         this.page = 1;
-        this.url = "http://localhost:8080/titles?page=";
+        this.url = "http://localhost:8080/history?page=";
         this.nextPage = this.nextPage.bind(this);
         this.prevPage = this.prevPage.bind(this);
     }
@@ -23,12 +23,10 @@ export default class Titles extends Component {
         const request = async () => {
             const res = await fetch(finalUrl);
             if (res.status === 200) {
-                console.log("newsLoaded");
-                let news = await _parseJSON(res);
-                console.log("news_", news);
-                this.setState({ news: news });
+                let comments = await _parseJSON(res);
+                this.setState({ comments: comments });
             } else {
-                alert("cant load news!");
+                alert("cant load history!");
             }
         }
         request();
@@ -46,20 +44,19 @@ export default class Titles extends Component {
         });
     }
     render() {
-        console.log("render_", this.state.news);
-        if (this.state.news === undefined || isEmpty(this.state.news)) {
+        if (this.state.comments === undefined || isEmpty(this.state.comments)) {
             return (
                 'loading'
             )
         }
         else {
-            const news = this.state.news;
-            const articleElements = news.map((article, index) =>
-                <li key={article.ID} className="article-list__li">
-                    <Article article={article} id={article.ID} handleClick={this.handleClick} />
+            const comments = this.state.comments["history"];
+            const commentsElements = comments.map((comment, index) =>
+                <li key={comment.timestamp} className="article-list__li">
+                    <LikedEntity user={comment.name} timestamp={comment.timestamp} comment={comment.comment} id={index} />
                 </li>
             )
-            let disabledNext = articleElements.length !== 10
+            let disabledNext = commentsElements.length !== 10
             let disabledPrev = this.page === 1;
 
             let pager = (<Pager>
@@ -74,7 +71,7 @@ export default class Titles extends Component {
                 <div>
                     {pager}
                     < ul >
-                        {articleElements}
+                        {commentsElements}
                     </ul >
                 </div>
             )

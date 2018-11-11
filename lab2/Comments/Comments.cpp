@@ -133,3 +133,27 @@ void Clear::handleRequest(const Http::Request& request, Http::Response& response
     response.out() << result.dump();
 }
 #endif
+
+GetCommentsById::GetCommentsById(Model* _model)
+    : Base(_model)
+{
+}
+
+void GetCommentsById::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    auto ids = request.getParameterValues("id");
+    if (request.method() != "GET") {
+        response.setStatus(403);
+        return;
+    }
+    std::vector<int32_t> idsInt;
+    for (auto id : ids) {
+        idsInt.push_back(atoi(id.c_str()));
+    }
+    json comments = model->getCommentsById(idsInt);
+    if (comments.empty()) {
+        response.out() << "Cant find names comments";
+        return;
+    }
+    response.out() << comments.dump();
+}

@@ -5,6 +5,7 @@ import Register from "./components/Register"
 import CreateNews from "./components/CreateNews"
 import Titles from "./components/Titles"
 import ArticleFull from "./components/ArticleFull"
+import History from "./components/History"
 
 
 const ROUTES = [
@@ -12,6 +13,7 @@ const ROUTES = [
   { name: "register" },
   { name: "create news" },
   { name: "last news" },
+  { name: "history" },
 ]
 
 export const SecondRoutes = {
@@ -56,8 +58,12 @@ class App extends Component {
         mainPart = <Titles handleClick={this.handleClick} />
         break;
       case 4:
+        mainPart = <History />
+        break;
+      case 5:
         mainPart = <ArticleFull id={this.state.articleId} />
         break;
+
       default:
         mainPart = <Login />
 

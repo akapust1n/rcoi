@@ -38,8 +38,11 @@ private:
         usersTestDb = tree.get<std::string>("settings.userstestdb");
         commentsReleaseDb = tree.get<std::string>("settings.commentsreleasedb");
         commentsTestDb = tree.get<std::string>("settings.commentstestdb");
+        likehistoryReleaseDb = tree.get<std::string>("settings.likehistoryreleasedb");
+        likehistoryTestDb = tree.get<std::string>("settings.likehistorytestdb");
         if (newsReleaseDb.empty() or newsTestDb.empty() or usersReleaseDb.empty() or usersTestDb.empty()
-            or commentsReleaseDb.empty() or commentsTestDb.empty())
+            or commentsReleaseDb.empty() or commentsTestDb.empty() or likehistoryReleaseDb.empty()
+            or likehistoryTestDb.empty())
             throw std::string("cant read config");
     }
 
@@ -51,6 +54,8 @@ private:
     std::string usersTestDb;
     std::string commentsReleaseDb;
     std::string commentsTestDb;
+    std::string likehistoryReleaseDb;
+    std::string likehistoryTestDb;
 
 public:
     std::string getNewsDb() const
@@ -75,6 +80,14 @@ public:
         return commentsTestDb;
 #endif
         return commentsReleaseDb;
+    }
+
+    std::string getLikeHistoryDb() const
+    {
+#ifdef IS_TEST_BUILD
+        return likehistoryTestDb;
+#endif
+        return likehistoryReleaseDb;
     }
 };
 

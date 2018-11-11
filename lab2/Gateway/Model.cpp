@@ -39,6 +39,7 @@ const Http::Message Model::deletefromService(Model::Service service, const std::
 
 const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& headers, const std::string& params)
 {
+
     Wt::Http::Message result;
     const Wt::Http::Message msg = getfromService(News, headers, params, "titles");
     if (msg.status() == 200) {
@@ -120,25 +121,41 @@ const Http::Message Model::del(const std::vector<Http::Message::Header>& headers
 
 const Http::Message Model::like(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    Wt::Http::Message result = postToService(Comments, headers, body, "like");
-    Wt::Http::Message result2 = postToService(Users, headers, body, "incRating");
-    if (result.status() != 200 or result2.status() != 200)
-        result.setStatus(500);
-    return result;
+    Wt::Http::Message checkLike = postToService(LikeHistory, headers, body, "writeLike");
+    json likeStatus = tryParsejson(checkLike.body());
+    auto entityIt = likeStatus.find("entityId");
+
+    if (checkLike.status() == 200 and entityIt != likeStatus.end() and entityIt.value().get<int32_t>() != -1) {
+
+        Wt::Http::Message result = postToService(Comments, headers, body, "like");
+        Wt::Http::Message result2 = postToService(Users, headers, body, "incRating");
+        if (result.status() != 200 or result2.status() != 200)
+            result.setStatus(500);
+        return result;
+    } else {
+        checkLike.setStatus(500);
+        return checkLike;
+    }
 }
 
 const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& headers, const std::string& params)
 {
+    std::cout << "START REQUEST_" << std::endl;
     Wt::Http::Message result;
     json resultJson;
+    std::cout << "BEFORE getNews" << std::endl;
     Wt::Http::Message getNews = getfromService(News, headers, params, "getnews"); //title, body, creationDate
+    std::cout << "AFTER getNews" << getNews.status() << std::endl;
+
     if (getNews.status() == 200) {
         writeHeaders(result, getNews.headers());
         json newsJson = tryParsejson(getNews.body());
         resultJson["news"] = newsJson;
         json resultComments = json::array();
-
+        std::cout << "BEFORE getCommnets" << std::endl;
         Wt::Http::Message getComments = getfromService(Comments, headers, params, "getComments");
+        std::cout << "AFTER getCommnets" << getComments.status() << std::endl;
+
         if (getComments.status() == 200) {
 
             json commentsJson = tryParsejson(getComments.body());
@@ -152,8 +169,9 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
 
             if (userIds.begin() != userIds.end())
                 userIds.erase(userIds.end() - 1); //remove last &
-
+            std::cout << "BEFORE getUsernames" << std::endl;
             Wt::Http::Message getUsernames = getfromService(Users, headers, userIds, "names");
+            std::cout << "AFTER getUsernames" << getUsernames.status() << std::endl;
             if (getUsernames.status() == 200 or userIds.empty()) {
                 json names = tryParsejson(getUsernames.body());
                 std::map<int32_t, std::string> userIdtoName;
@@ -187,6 +205,64 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
         result.setStatus(getNews.status());
     }
 
+    return result;
+}
+
+const Http::Message Model::history(const std::vector<Http::Message::Header>& headers, const std::string& params)
+{
+    Wt::Http::Message result;
+    Wt::Http::Message getHistory = getfromService(LikeHistory, headers, params, "getLikes");
+    std::string userIds;
+    std::string commentIds;
+    if (getHistory.status() == 200) {
+        json resultJson;
+        json resultsHistory = json::array();
+        json historyJson = tryParsejson(getHistory.body());
+        for (auto historyIt = historyJson.cbegin(); historyIt != historyJson.cend(); ++historyIt) {
+            LikeEntity le;
+            from_json(*historyIt, le);
+            userIds += std::string("id=") + std::to_string(le.userId) + "&";
+            commentIds += std::string("id=") + std::to_string(le.commentId) + "&";
+        }
+        if (userIds.begin() != userIds.end())
+            userIds.erase(userIds.end() - 1); //remove last &
+        if (commentIds.begin() != commentIds.end())
+            commentIds.erase(commentIds.end() - 1); //remove last &
+
+        Wt::Http::Message getUsernames = getfromService(Users, headers, userIds, "names");
+        Wt::Http::Message getComments = getfromService(Comments, headers, commentIds, "commentsById");
+
+        if ((getUsernames.status() == 200 and getComments.status() == 200) or userIds.empty()) {
+            json names = tryParsejson(getUsernames.body());
+            std::map<int32_t, std::string> userIdtoName;
+            json comments = tryParsejson(getComments.body());
+            std::map<int32_t, std::string> commentIdtoComment;
+
+            for (auto name : names) {
+                userIdtoName[name["userId"].get<int32_t>()] = name["name"].get<std::string>();
+            }
+            for (auto comment : comments) {
+                commentIdtoComment[comment["commentId"].get<int32_t>()] = comment["body"].get<std::string>();
+            }
+
+            for (auto historyIt = historyJson.cbegin(); historyIt != historyJson.cend(); ++historyIt) {
+                LikeEntityExternal le;
+                le.timestamp = (*historyIt)["timestamp"].get<long long>();
+                le.comment = commentIdtoComment[(*historyIt)["commentId"].get<int32_t>()];
+                le.name = userIdtoName[(*historyIt)["userId"].get<int32_t>()];
+                resultsHistory.push_back(le);
+            }
+            resultJson["history"] = resultsHistory;
+            result.addBodyText(resultJson.dump());
+            result.setStatus(200);
+        } else {
+            LOG_ERROR("User or comments service error");
+            result.setStatus(getUsernames.status());
+        }
+    } else {
+        LOG_ERROR("LikeHistory service error");
+        result.setStatus(getHistory.status());
+    }
     return result;
 }
 #ifdef IS_TEST_BUILD
