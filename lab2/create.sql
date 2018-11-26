@@ -1,3 +1,4 @@
+SET SQL_MODE='ALLOW_INVALID_DATES'; 
 drop database if exists lab2News;
 create database lab2News;
 
@@ -7,7 +8,9 @@ CREATE TABLE IF NOT EXISTS News (
     ID  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     body TEXT,
-    creationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    creationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	token VARCHAR(25),
+    expireDate TIMESTAMP
 )  ENGINE=INNODB;
 INSERT INTO News(title,body) VALUES("ab", "cde");
 INSERT INTO News(title,body) VALUES("gd", "ghj");
@@ -31,6 +34,15 @@ CREATE TABLE IF NOT EXISTS Users (
     creationData TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;
 
+CREATE TABLE IF NOT EXISTS Tokens (
+    ID  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    userID  INT DEFAULT NULL,
+    token VARCHAR(250) NOT NULL,
+    expireTimestamp TIMESTAMP NOT NULL,
+    updateTimestamp TIMESTAMP NOT NULL,
+    kind SMALLINT UNSIGNED NOT NULL
+)  ENGINE=INNODB;
+
 drop database if exists lab2UsersTest;
 create database lab2UsersTest;
 use lab2UsersTest;
@@ -45,7 +57,7 @@ CREATE TABLE IF NOT EXISTS Comments (
     newsId INT NOT NULL,
     userId INT NOT NULL,
     body TEXT,
-   rating INT NOT NULL DEFAULT 0,
+	rating INT NOT NULL DEFAULT 0,
     creationData TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     KEY(newsId, userId)
 )  ENGINE=INNODB;

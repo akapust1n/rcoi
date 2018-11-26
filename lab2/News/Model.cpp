@@ -9,12 +9,12 @@ Model::Model()
 {
 }
 
-const json Model::getTitles(int32_t page)
+const json_t Model::getTitles(int32_t page)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
 
-    json result = json::array();
+    json_t result = json_t::array();
 
     auto req = db->prepareStatement("SELECT ID, title, UNIX_TIMESTAMP(creationDate) from News order by creationDate desc limit ? offset ?");
     req->bind(0, newsPerPage);
@@ -36,11 +36,11 @@ const json Model::getTitles(int32_t page)
     return result;
 }
 
-const json Model::createNews(const std::string& title, const std::string& body)
+const json_t Model::createNews(const std::string& title, const std::string& body)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    json result;
+    json_t result;
     auto req = db->prepareStatement("INSERT INTO News(title,body) VALUES(?, ?);");
     req->bind(0, title);
     req->bind(1, body);
@@ -61,11 +61,11 @@ const json Model::createNews(const std::string& title, const std::string& body)
     return result;
 }
 
-const json Model::getNews(int32_t newsId)
+const json_t Model::getNews(int32_t newsId)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    json result;
+    json_t result;
     std::cout << "BEFORE PREPARED STATEMENT" << std::endl;
     auto req = db->prepareStatement("SELECT ID, title,body, UNIX_TIMESTAMP(creationDate) from News where ID=?");
     std::cout << "AFTER AFTER STATEMENT" << std::endl;

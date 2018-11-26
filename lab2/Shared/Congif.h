@@ -89,6 +89,10 @@ public:
 #endif
         return likehistoryReleaseDb;
     }
+    std::string getJWTSecret() const
+    {
+        return "secret";
+    }
 };
 
 #endif // Config_H

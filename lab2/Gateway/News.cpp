@@ -30,6 +30,7 @@ void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Respo
         response.setStatus(200);
         return;
     }
+
     const std::string body = getRequestBody(request);
     const Wt::Http::Message& msg = model->createNews(request.headers(), body);
     writeOutput(msg, response);

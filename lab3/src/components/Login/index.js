@@ -47,7 +47,11 @@ export default class Login extends Component {
             } else {
                 throw new Error();
             }
-        }).then(json => { alert("login is ok"); })
+        }).then(json => {
+            console.log("login json", json);
+            alert("login is ok");
+            localStorage.setItem("authtoken", json["authtoken"]);
+        })
             .catch((error) => {
                 alert("Cant login");
             })

@@ -14,14 +14,15 @@ CreateComment::CreateComment(Model* _model)
 
 void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    json commentJson = tryParsejson(getRequestBody(request));
+    json_t commentjson = tryParsejson(getRequestBody(request));
     Comment comment;
-    if (request.method() != "POST" or !from_json(commentJson, comment)) {
+    std::cout << commentjson.dump() << std::endl;
+    if (request.method() != "POST" or !from_json(commentjson, comment)) {
         response.setStatus(403);
         return;
     }
 
-    json newsResponse = model->createComment(comment.userId, comment.newsId, comment.text);
+    json_t newsResponse = model->createComment(comment.userId, comment.newsId, comment.text);
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;
@@ -36,13 +37,13 @@ LikeComment::LikeComment(Model* _model)
 
 void LikeComment::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json body = tryParsejson(getRequestBody(request));
+    json_t body = tryParsejson(getRequestBody(request));
     int32_t id = body["commentId"].get<int32_t>();
     if (request.method() != "POST" or !body.count("commentId")) {
         response.setStatus(403);
         return;
     }
-    json likeResult = model->likeComment(id);
+    json_t likeResult = model->likeComment(id);
     if (likeResult.empty()) {
         response.out() << "Cant like comment";
         response.setStatus(500);
@@ -67,7 +68,7 @@ void CountComment::handleRequest(const Http::Request& request, Http::Response& r
     for (auto id : ids) {
         idsInt.push_back(atoi(id.c_str()));
     }
-    json comments = model->countComments(idsInt);
+    json_t comments = model->countComments(idsInt);
     if (comments.empty()) {
         response.out() << "Cant count comments";
         response.setStatus(200);
@@ -83,13 +84,13 @@ DeleteComments::DeleteComments(Model* _model)
 
 void DeleteComments::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json body = tryParsejson(getRequestBody(request));
+    json_t body = tryParsejson(getRequestBody(request));
     int32_t id = body["userId"].get<int32_t>();
     if (request.method() != "DELETE" or !body.count("userId")) {
         response.setStatus(403);
         return;
     }
-    json result = model->deleteComments(id);
+    json_t result = model->deleteComments(id);
     if (result.empty()) {
         response.out() << "Cant delete comments";
         response.setStatus(500);
@@ -111,7 +112,7 @@ void GetComments::handleRequest(const Http::Request& request, Http::Response& re
         response.setStatus(403);
         return;
     }
-    json news = model->getComments(newsId, page);
+    json_t news = model->getComments(newsId, page);
     if (news.empty()) {
         response.out() << "Cant find comments";
         response.setStatus(200);
@@ -150,7 +151,7 @@ void GetCommentsById::handleRequest(const Http::Request& request, Http::Response
     for (auto id : ids) {
         idsInt.push_back(atoi(id.c_str()));
     }
-    json comments = model->getCommentsById(idsInt);
+    json_t comments = model->getCommentsById(idsInt);
     if (comments.empty()) {
         response.out() << "Cant find names comments";
         return;

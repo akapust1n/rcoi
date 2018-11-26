@@ -5,9 +5,18 @@
 #include <Wt/Http/Response>
 #include <Wt/WResource>
 #include <Wt/WServer>
+#include <algorithm>
+#include <boost/algorithm/string.hpp>
+#include <climits>
+#include <functional>
+#include <iostream>
 #include <nlohmann/json.hpp>
+#include <random>
+#include <sstream>
+#include <string>
+#include <vector>
 
-using json = nlohmann::json;
+using json_t = nlohmann::json;
 
 using namespace Wt;
 namespace HttpAssist {
@@ -115,13 +124,13 @@ inline void writeHeaders(Wt::Http::Message& msg, const std::vector<Wt::Http::Mes
         msg.setHeader(headers[i].name(), headers[i].value());
     }
 }
-inline json tryParsejson(const std::string& body)
+inline json_t tryParsejson(const std::string& body)
 {
-    json result;
+    json_t result;
     try {
-        result = json::parse(body);
+        result = json_t::parse(body);
     } catch (...) {
-        return json();
+        return json_t();
     }
     return result;
 }
@@ -131,6 +140,28 @@ inline std::string getRequestBody(const Wt::Http::Request& request)
     while (std::getline(request.in(), body))
         ;
     return body;
+}
+inline std::string getAuthToken(const std::vector<Http::Message::Header>& headers)
+{
+    for (auto header : headers) {
+        const std::string headerName = boost::algorithm::to_lower_copy(header.name());
+        if (headerName == "authorization") {
+            std::string value = header.value();
+            std::size_t found = value.find_last_of(" ");
+
+            return value.substr(found + 1);
+        }
+    }
+    return std::string();
+}
+
+inline void addUserId(std::string& body, uint32_t userId)
+{
+    std::cout << "BODY" << body << std::endl;
+    json_t bodyJson = tryParsejson(body);
+    bodyJson["userId"] = userId;
+    std::cout << "BODY AFTER" << bodyJson.dump() << std::endl;
+    body = bodyJson.dump();
 }
 }
 

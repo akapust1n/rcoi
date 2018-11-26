@@ -11,9 +11,9 @@ using nlohmann::json;
 class Model {
 public:
     Model();
-    const json getTitles(int32_t page);
-    const json createNews(const std::string& title, const std::string& body);
-    const json getNews(int32_t newsId);
+    const json_t getTitles(int32_t page);
+    const json_t createNews(const std::string& title, const std::string& body);
+    const json_t getNews(int32_t newsId);
 #ifdef IS_TEST_BUILD
     const json clear();
 #endif

@@ -19,7 +19,7 @@ void GetLikes::handleRequest(const Http::Request& request, Http::Response& respo
         return;
     }
 
-    json newsResponse = model->getLikes(page);
+    json_t newsResponse = model->getLikes(page);
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;
@@ -34,14 +34,14 @@ WriteLike::WriteLike(Model* _model)
 
 void WriteLike::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json likeEntityJson = tryParsejson(getRequestBody(request));
+    json_t likeEntityjson = tryParsejson(getRequestBody(request));
     LikeEntity likeEntity;
-    if (request.method() != "POST" or !from_json(likeEntityJson, likeEntity)) {
+    if (request.method() != "POST" or !from_json(likeEntityjson, likeEntity)) {
         response.setStatus(403);
         return;
     }
 
-    json newsResponse = model->writeLike(likeEntity.userId, likeEntity.commentId);
+    json_t newsResponse = model->writeLike(likeEntity.userId, likeEntity.commentId);
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;

@@ -18,7 +18,7 @@ void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Respon
         response.setStatus(403);
         return;
     }
-    json news = model->getTitles(page);
+    json_t news = model->getTitles(page);
     if (news.empty()) {
         response.setStatus(500);
         response.out() << "Cant find news";
@@ -34,9 +34,9 @@ CreateNews::CreateNews(Model* _model)
 
 void CreateNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json newsJson = tryParsejson(getRequestBody(request));
+    json_t newsjson = tryParsejson(getRequestBody(request));
     News news;
-    if (request.method() != "POST" or !from_json(newsJson, news)) {
+    if (request.method() != "POST" or !from_json(newsjson, news)) {
         response.setStatus(403);
         return;
     }
@@ -45,7 +45,7 @@ void CreateNews::handleRequest(const Http::Request& request, Http::Response& res
         return;
     }
 
-    json newsResponse = model->createNews(news.title, news.body);
+    json_t newsResponse = model->createNews(news.title, news.body);
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;
@@ -68,7 +68,7 @@ void GetNews::handleRequest(const Http::Request& request, Http::Response& respon
         return;
     }
     std::cout << "BEFORE GET MODEL" << std::endl;
-    json news = model->getNews(newsId);
+    json_t news = model->getNews(newsId);
     std::cout << "AFTER GET MODEL" << std::endl;
 
     if (news.empty()) {

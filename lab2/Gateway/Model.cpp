@@ -43,7 +43,7 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
     Wt::Http::Message result;
     const Wt::Http::Message msg = getfromService(News, headers, params, "titles");
     if (msg.status() == 200) {
-        json titles = json::parse(msg.body()); //trust that json is valid
+        json_t titles = json_t::parse(msg.body()); //trust that json is valid
         std::string newsIds;
         std::map<int32_t, Title> titlesMap;
         for (auto newsIt = titles.cbegin(); newsIt != titles.cend(); ++newsIt) {
@@ -59,8 +59,8 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
 
         const Wt::Http::Message& msgComments = getfromService(Comments, headers, newsIds, "count");
         if (msgComments.status() == 200) {
-            json countComments = json::parse(msgComments.body()); //trust that json is valid
-            json titlesArray = json::array();
+            json_t countComments = json_t::parse(msgComments.body()); //trust that json is valid
+            json_t titlesArray = json_t::array();
             for (auto countIt = countComments.cbegin(); countIt != countComments.cend(); ++countIt) {
                 Title title;
                 title.ID = (*countIt)["id"].get<int32_t>();
@@ -68,8 +68,8 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
                 title.count = (*countIt)["count"].get<int32_t>();
                 title.timestamp = titlesMap[title.ID].timestamp;
                 if (!title.title.empty()) {
-                    json titleJson = title;
-                    titlesArray.push_back(titleJson);
+                    json_t titlejson = title;
+                    titlesArray.push_back(titlejson);
                 }
             }
             result.setStatus(200);
@@ -122,7 +122,7 @@ const Http::Message Model::del(const std::vector<Http::Message::Header>& headers
 const Http::Message Model::like(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
     Wt::Http::Message checkLike = postToService(LikeHistory, headers, body, "writeLike");
-    json likeStatus = tryParsejson(checkLike.body());
+    json_t likeStatus = tryParsejson(checkLike.body());
     auto entityIt = likeStatus.find("entityId");
 
     if (checkLike.status() == 200 and entityIt != likeStatus.end() and entityIt.value().get<int32_t>() != -1) {
@@ -142,26 +142,26 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
 {
     std::cout << "START REQUEST_" << std::endl;
     Wt::Http::Message result;
-    json resultJson;
+    json_t resultjson;
     std::cout << "BEFORE getNews" << std::endl;
     Wt::Http::Message getNews = getfromService(News, headers, params, "getnews"); //title, body, creationDate
     std::cout << "AFTER getNews" << getNews.status() << std::endl;
 
     if (getNews.status() == 200) {
         writeHeaders(result, getNews.headers());
-        json newsJson = tryParsejson(getNews.body());
-        resultJson["news"] = newsJson;
-        json resultComments = json::array();
+        json_t newsjson = tryParsejson(getNews.body());
+        resultjson["news"] = newsjson;
+        json_t resultComments = json_t::array();
         std::cout << "BEFORE getCommnets" << std::endl;
         Wt::Http::Message getComments = getfromService(Comments, headers, params, "getComments");
         std::cout << "AFTER getCommnets" << getComments.status() << std::endl;
 
         if (getComments.status() == 200) {
 
-            json commentsJson = tryParsejson(getComments.body());
+            json_t commentsjson = tryParsejson(getComments.body());
 
             std::string userIds;
-            for (auto commentsIt = commentsJson.cbegin(); commentsIt != commentsJson.cend(); ++commentsIt) {
+            for (auto commentsIt = commentsjson.cbegin(); commentsIt != commentsjson.cend(); ++commentsIt) {
                 CommentInternal ci;
                 from_json(*commentsIt, ci);
                 userIds += std::string("id=") + std::to_string(ci.userId) + "&";
@@ -173,14 +173,14 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
             Wt::Http::Message getUsernames = getfromService(Users, headers, userIds, "names");
             std::cout << "AFTER getUsernames" << getUsernames.status() << std::endl;
             if (getUsernames.status() == 200 or userIds.empty()) {
-                json names = tryParsejson(getUsernames.body());
+                json_t names = tryParsejson(getUsernames.body());
                 std::map<int32_t, std::string> userIdtoName;
 
                 for (auto name : names) {
                     userIdtoName[name["userId"].get<int32_t>()] = name["name"].get<std::string>();
                 }
 
-                for (auto commentsIt = commentsJson.cbegin(); commentsIt != commentsJson.cend(); ++commentsIt) {
+                for (auto commentsIt = commentsjson.cbegin(); commentsIt != commentsjson.cend(); ++commentsIt) {
                     CommentExternal ce;
                     ce.body = (*commentsIt)["body"].get<std::string>();
                     ce.commentId = (*commentsIt)["commentId"].get<int32_t>();
@@ -189,8 +189,8 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
                     ce.userId = (*commentsIt)["userId"].get<int32_t>();
                     resultComments.push_back(ce);
                 }
-                resultJson["comments"] = resultComments;
-                result.addBodyText(resultJson.dump());
+                resultjson["comments"] = resultComments;
+                result.addBodyText(resultjson.dump());
                 result.setStatus(200);
             } else {
                 LOG_ERROR("User service error");
@@ -215,10 +215,10 @@ const Http::Message Model::history(const std::vector<Http::Message::Header>& hea
     std::string userIds;
     std::string commentIds;
     if (getHistory.status() == 200) {
-        json resultJson;
-        json resultsHistory = json::array();
-        json historyJson = tryParsejson(getHistory.body());
-        for (auto historyIt = historyJson.cbegin(); historyIt != historyJson.cend(); ++historyIt) {
+        json_t resultjson;
+        json_t resultsHistory = json_t::array();
+        json_t historyjson = tryParsejson(getHistory.body());
+        for (auto historyIt = historyjson.cbegin(); historyIt != historyjson.cend(); ++historyIt) {
             LikeEntity le;
             from_json(*historyIt, le);
             userIds += std::string("id=") + std::to_string(le.userId) + "&";
@@ -233,9 +233,9 @@ const Http::Message Model::history(const std::vector<Http::Message::Header>& hea
         Wt::Http::Message getComments = getfromService(Comments, headers, commentIds, "commentsById");
 
         if ((getUsernames.status() == 200 and getComments.status() == 200) or userIds.empty()) {
-            json names = tryParsejson(getUsernames.body());
+            json_t names = tryParsejson(getUsernames.body());
             std::map<int32_t, std::string> userIdtoName;
-            json comments = tryParsejson(getComments.body());
+            json_t comments = tryParsejson(getComments.body());
             std::map<int32_t, std::string> commentIdtoComment;
 
             for (auto name : names) {
@@ -245,15 +245,15 @@ const Http::Message Model::history(const std::vector<Http::Message::Header>& hea
                 commentIdtoComment[comment["commentId"].get<int32_t>()] = comment["body"].get<std::string>();
             }
 
-            for (auto historyIt = historyJson.cbegin(); historyIt != historyJson.cend(); ++historyIt) {
+            for (auto historyIt = historyjson.cbegin(); historyIt != historyjson.cend(); ++historyIt) {
                 LikeEntityExternal le;
                 le.timestamp = (*historyIt)["timestamp"].get<long long>();
                 le.comment = commentIdtoComment[(*historyIt)["commentId"].get<int32_t>()];
                 le.name = userIdtoName[(*historyIt)["userId"].get<int32_t>()];
                 resultsHistory.push_back(le);
             }
-            resultJson["history"] = resultsHistory;
-            result.addBodyText(resultJson.dump());
+            resultjson["history"] = resultsHistory;
+            result.addBodyText(resultjson.dump());
             result.setStatus(200);
         } else {
             LOG_ERROR("User or comments service error");
@@ -264,6 +264,21 @@ const Http::Message Model::history(const std::vector<Http::Message::Header>& hea
         result.setStatus(getHistory.status());
     }
     return result;
+}
+
+bool Model::checkAuth(const std::vector<Http::Message::Header>& headers, uint32_t& userId)
+{
+    const std::string token = HttpAssist::getAuthToken(headers);
+    const std::string params = "token=" + token;
+
+    Wt::Http::Message result = getfromService(Users, {}, params, "auth");
+    const bool authorized = result.status() == 200;
+    if (authorized) {
+        json_t userIdJson = tryParsejson(result.body());
+        auto userIdIt = userIdJson.find("userId");
+        userId = userIdIt.value().get<uint32_t>();
+    }
+    return result.status() == 200;
 }
 #ifdef IS_TEST_BUILD
 

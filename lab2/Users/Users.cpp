@@ -13,19 +13,19 @@ Login::Login(Model* _model)
 
 void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    json userAuthJson = tryParsejson(getRequestBody(request));
+    json_t userAuthjson = tryParsejson(getRequestBody(request));
     UserAuth userAuth;
-    if (request.method() != "POST" or !from_json(userAuthJson, userAuth)) {
+    if (request.method() != "POST" or !from_json(userAuthjson, userAuth)) {
         response.setStatus(403);
         return;
     }
 
-    json newsResponse = model->login(userAuth.name, userAuth.password);
-    if (newsResponse.empty()) {
+    json_t loginResponse = model->login(userAuth.name, userAuth.password);
+    if (loginResponse.empty()) {
         response.setStatus(500);
         return;
     }
-    response.out() << newsResponse.dump();
+    response.out() << loginResponse.dump();
 }
 
 Reg::Reg(Model* _model)
@@ -35,9 +35,9 @@ Reg::Reg(Model* _model)
 
 void Reg::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json userAuthJson = tryParsejson(getRequestBody(request));
+    json_t userAuthjson = tryParsejson(getRequestBody(request));
     UserAuth userAuth;
-    if (request.method() != "POST" or !from_json(userAuthJson, userAuth)) {
+    if (request.method() != "POST" or !from_json(userAuthjson, userAuth)) {
         response.setStatus(403);
         return;
     }
@@ -45,7 +45,7 @@ void Reg::handleRequest(const Http::Request& request, Http::Response& response)
         response.setStatus(403);
         return;
     }
-    json newsResponse = model->reg(userAuth.name, userAuth.password);
+    json_t newsResponse = model->reg(userAuth.name, userAuth.password);
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;
@@ -60,14 +60,14 @@ Del::Del(Model* _model)
 
 void Del::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json userIdJson = tryParsejson(getRequestBody(request));
-    auto userIdIt = userIdJson.find("userId");
-    if (request.method() != "DELETE" or userIdIt == userIdJson.end()) {
+    json_t userIdjson = tryParsejson(getRequestBody(request));
+    auto userIdIt = userIdjson.find("userId");
+    if (request.method() != "DELETE" or userIdIt == userIdjson.end()) {
         response.setStatus(403);
         return;
     }
 
-    json newsResponse = model->del(userIdIt.value().get<int32_t>());
+    json_t newsResponse = model->del(userIdIt.value().get<int32_t>());
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;
@@ -82,14 +82,14 @@ IncRating::IncRating(Model* _model)
 
 void IncRating::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    json userIdJson = tryParsejson(getRequestBody(request));
-    auto userIdIt = userIdJson.find("userId");
-    if (request.method() != "POST" or userIdIt == userIdJson.end()) {
+    json_t userIdjson = tryParsejson(getRequestBody(request));
+    auto userIdIt = userIdjson.find("userId");
+    if (request.method() != "POST" or userIdIt == userIdjson.end()) {
         response.setStatus(403);
         return;
     }
 
-    json newsResponse = model->incRating(userIdIt.value().get<int32_t>());
+    json_t newsResponse = model->incRating(userIdIt.value().get<int32_t>());
     if (newsResponse.empty()) {
         response.setStatus(500);
         return;
@@ -113,7 +113,7 @@ void GetUsernames::handleRequest(const Http::Request& request, Http::Response& r
     for (auto id : ids) {
         idsInt.push_back(atoi(id.c_str()));
     }
-    json comments = model->getNames(idsInt);
+    json_t comments = model->getNames(idsInt);
     if (comments.empty()) {
         response.out() << "Cant find names comments";
         return;
@@ -134,3 +134,28 @@ void Clear::handleRequest(const Http::Request& request, Http::Response& response
     response.out() << result.dump();
 }
 #endif
+
+CheckAuth::CheckAuth(Model* _model)
+    : Base(_model)
+{
+}
+
+void CheckAuth::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    auto token = request.getParameter("token");
+    if (request.method() != "GET" or token == nullptr or ((*token).empty())) {
+        response.setStatus(403);
+        return;
+    }
+    //can throw
+    try {
+        auto dec_obj = jwt::decode(*token, algorithms({ "hs256" }), secret(key));
+        uint32_t userId = static_cast<uint32_t>(std::stoi(dec_obj.payload().get_claim_value<std::string>("userId")));
+        json_t result;
+        result["userId"] = userId;
+        response.setStatus(model->checkAuth(userId, *token));
+        response.out() << result;
+    } catch (...) {
+        response.setStatus(401);
+    }
+}

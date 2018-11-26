@@ -10,8 +10,8 @@ using nlohmann::json;
 class Model {
 public:
     Model();
-    const json getLikes(int32_t page);
-    const json writeLike(int32_t userId, int32_t commentId);
+    const json_t getLikes(int32_t page);
+    const json_t writeLike(int32_t userId, int32_t commentId);
 
 private:
     Model(const Model&) = delete;

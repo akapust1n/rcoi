@@ -44,7 +44,7 @@ TEST(Gateway, Users)
 {
     runServer();
 
-    json params;
+    json_t params;
     const std::string name = "test8";
     const std::string password = "test2";
 
@@ -57,7 +57,7 @@ TEST(Gateway, Users)
     msgReg.addBodyText(params.dump());
     client.post("http://localhost:8080/register", msgReg);
     client.waitDone();
-    json resultReg = json::parse(client.message().body());
+    json_t resultReg = json_t::parse(client.message().body());
     int32_t userIdReg = resultReg["userId"].get<int32_t>();
     ASSERT_GE(userIdReg, 0);
 
@@ -67,7 +67,7 @@ TEST(Gateway, Users)
     msgLogin.addBodyText(params.dump());
     client.post("http://localhost:8080/login", msgLogin);
     client.waitDone();
-    json resultLogin = json::parse(client.message().body());
+    json_t resultLogin = json_t::parse(client.message().body());
     int32_t userIdLogin = resultLogin["userId"].get<int32_t>();
 
     ASSERT_EQ(userIdReg, userIdLogin);
@@ -90,7 +90,7 @@ TEST(Gateway, News)
 {
     runServer();
 
-    json params;
+    json_t params;
     HttpAssist::Client client;
 
     //CREATENEWS_TEST
@@ -100,7 +100,7 @@ TEST(Gateway, News)
     msgCreate.addBodyText(params.dump());
     client.post("http://localhost:8080/createNews", msgCreate);
     client.waitDone();
-    json resultCreateNews = json::parse(client.message().body());
+    json_t resultCreateNews = json_t::parse(client.message().body());
     int32_t newsId = resultCreateNews["newsId"].get<int32_t>();
     ASSERT_GE(newsId, 0);
 
@@ -115,14 +115,14 @@ TEST(Gateway, News)
     }
     client.get(fmt::format("http://localhost:8080/titles?page={0}", 1));
     client.waitDone();
-    json resultGetTitle = json::parse(client.message().body());
+    json_t resultGetTitle = json_t::parse(client.message().body());
     ASSERT_EQ(resultGetTitle.size(), 10);
 
     //ONENEWS_TEST
     client.get(fmt::format("http://localhost:8080/oneNews?newsId={0}&page={1}", newsId, 1));
     client.waitDone();
-    json resultGetOneNews = json::parse(client.message().body());
-    json newsObject = resultGetOneNews["news"];
+    json_t resultGetOneNews = json_t::parse(client.message().body());
+    json_t newsObject = resultGetOneNews["news"];
     std::cout << "ZZZZZZZZZZZZ" << newsObject.dump();
     ASSERT_EQ(newsObject["ID"].get<int32_t>(), newsId);
 
@@ -134,7 +134,7 @@ TEST(Gateway, Comments)
 {
     runServer();
 
-    json params;
+    json_t params;
     HttpAssist::Client client;
 
     //COMMENTNEWS_TEST
@@ -145,7 +145,7 @@ TEST(Gateway, Comments)
     msgComment.addBodyText(params.dump());
     client.post("http://localhost:8080/comment", msgComment);
     client.waitDone();
-    json resultComment = json::parse(client.message().body());
+    json_t resultComment = json_t::parse(client.message().body());
     int32_t commentId = resultComment["commentId"].get<int32_t>();
     ASSERT_GE(commentId, 0);
 
@@ -158,7 +158,7 @@ TEST(Gateway, Comments)
     msgReg.addBodyText(params.dump());
     client.post("http://localhost:8080/register", msgReg);
     client.waitDone();
-    json resultReg = json::parse(client.message().body());
+    json_t resultReg = json_t::parse(client.message().body());
     int32_t userIdReg = resultReg["userId"].get<int32_t>();
     ASSERT_GE(userIdReg, 0);
 
@@ -170,7 +170,7 @@ TEST(Gateway, Comments)
     msgLike.addBodyText(params.dump());
     client.post("http://localhost:8080/like", msgLike);
     client.waitDone();
-    json resultLike = json::parse(client.message().body());
+    json_t resultLike = json_t::parse(client.message().body());
 
     ASSERT_STREQ(resultLike["result"].get<std::string>().c_str(), "rating is updated!");
     ASSERT_EQ(client.message().status(), 200);

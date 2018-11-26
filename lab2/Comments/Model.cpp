@@ -9,11 +9,11 @@ Model::Model()
 {
 }
 
-const json Model::createComment(int32_t userId, int32_t newsId, const std::string text)
+const json_t Model::createComment(int32_t userId, int32_t newsId, const std::string text)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    json result;
+    json_t result;
     auto req = db->prepareStatement("INSERT INTO Comments(newsId, userId, body) VALUES(?, ?, ?);");
     req->bind(0, newsId);
     req->bind(1, userId);
@@ -26,7 +26,7 @@ const json Model::createComment(int32_t userId, int32_t newsId, const std::strin
             LOG_INFO("Db request %s", req->sql().c_str());
             req->execute();
             if (req->affectedRowCount() == 0)
-                return json();
+                return json_t();
             result["commentId"] = req->insertedId();
         } catch (...) {
             LOG_INFO("Cant create comment!");
@@ -36,11 +36,11 @@ const json Model::createComment(int32_t userId, int32_t newsId, const std::strin
     return result;
 }
 
-const json Model::countComments(const std::vector<int32_t>& ids)
+const json_t Model::countComments(const std::vector<int32_t>& ids)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    json result;
+    json_t result;
     for (auto id : ids) {
         auto req = db->prepareStatement("SELECT COUNT(*) FROM Comments WHERE newsId=?;");
         req->bind(0, id);
@@ -50,7 +50,7 @@ const json Model::countComments(const std::vector<int32_t>& ids)
         } else {
             try {
                 int32_t count;
-                json temp;
+                json_t temp;
                 req->execute();
                 LOG_INFO("Db request %s", req->sql().c_str());
                 req->nextRow();
@@ -68,11 +68,11 @@ const json Model::countComments(const std::vector<int32_t>& ids)
     return result;
 }
 
-const json Model::deleteComments(int32_t userId)
+const json_t Model::deleteComments(int32_t userId)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    json result;
+    json_t result;
 
     auto req = db->prepareStatement("DELETE FROM Comments WHERE userId=?;");
     req->bind(0, userId);
@@ -92,11 +92,11 @@ const json Model::deleteComments(int32_t userId)
     return result;
 }
 
-const json Model::likeComment(int32_t commentId)
+const json_t Model::likeComment(int32_t commentId)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    json result;
+    json_t result;
 
     auto req = db->prepareStatement("UPDATE Comments SET rating = rating+1 WHERE ID=?;");
     req->bind(0, commentId);
@@ -116,12 +116,12 @@ const json Model::likeComment(int32_t commentId)
     return result;
 }
 
-const json Model::getComments(int32_t newsId, int32_t page)
+const json_t Model::getComments(int32_t newsId, int32_t page)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
 
-    json result = json::array();
+    json_t result = json_t::array();
 
     auto req = db->prepareStatement("SELECT ID,userId,body,rating from Comments where newsId = ? order by creationData desc limit ? offset ?");
     req->bind(0, newsId);
@@ -150,11 +150,11 @@ const json Model::getComments(int32_t newsId, int32_t page)
     return result;
 }
 
-const json Model::getCommentsById(const std::vector<int32_t>& ids)
+const json_t Model::getCommentsById(const std::vector<int32_t>& ids)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    json result;
+    json_t result;
     for (auto id : ids) {
         auto req = db->prepareStatement("SELECT ID,body FROM Comments WHERE ID=?;");
         req->bind(0, id);

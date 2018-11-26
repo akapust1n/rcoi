@@ -1,9 +1,9 @@
-#ifndef JsonStructs_H
-#define JsonStructs_H
+#ifndef jsonStructs_H
+#define jsonStructs_H
+#include "jwt/jwt.hpp"
 #include <cstdlib>
 #include <nlohmann/json.hpp>
 #include <string>
-using json = nlohmann::json;
 
 namespace ns {
 struct News {
@@ -13,12 +13,12 @@ struct News {
     long long timestamp;
 };
 
-inline void to_json(json& j, const News& p)
+inline void to_json(json_t& j, const News& p)
 {
-    j = json{ { "ID", p.ID }, { "title", p.title }, { "body", p.body }, { "timestamp", p.timestamp } };
+    j = json_t{ { "ID", p.ID }, { "title", p.title }, { "body", p.body }, { "timestamp", p.timestamp } };
 }
 
-inline bool from_json(const json& j, News& p)
+inline bool from_json(const json_t& j, News& p)
 {
     try {
         auto titleIt = j.find("title");
@@ -41,9 +41,9 @@ struct Title {
     long long timestamp;
 };
 
-inline void to_json(json& j, const Title& p)
+inline void to_json(json_t& j, const Title& p)
 {
-    j = json{ { "ID", p.ID }, { "title", p.title }, { "count", p.count }, { "timestamp", p.timestamp } };
+    j = json_t{ { "ID", p.ID }, { "title", p.title }, { "count", p.count }, { "timestamp", p.timestamp } };
 }
 
 struct Comment {
@@ -52,11 +52,11 @@ struct Comment {
     std::string text;
 };
 
-inline void to_json(json& j, const Comment& p)
+inline void to_json(json_t& j, const Comment& p)
 {
-    j = json{ { "newsId", p.newsId }, { "userId", p.userId }, { "text", p.text } };
+    j = json_t{ { "newsId", p.newsId }, { "userId", p.userId }, { "text", p.text } };
 }
-inline bool from_json(const json& j, Comment& p)
+inline bool from_json(const json_t& j, Comment& p)
 {
     try {
         auto userIdIt = j.find("userId");
@@ -79,11 +79,11 @@ struct UserAuth {
     std::string password;
 };
 
-inline void to_json(json& j, const UserAuth& p)
+inline void to_json(json_t& j, const UserAuth& p)
 {
-    j = json{ { "name", p.name }, { "password", p.password } };
+    j = json_t{ { "name", p.name }, { "password", p.password } };
 }
-inline bool from_json(const json& j, UserAuth& p)
+inline bool from_json(const json_t& j, UserAuth& p)
 {
     try {
         auto nameIt = j.find("name");
@@ -106,11 +106,11 @@ struct CommentInternal {
     int32_t rating;
 };
 
-inline void to_json(json& j, const CommentInternal& p)
+inline void to_json(json_t& j, const CommentInternal& p)
 {
-    j = json{ { "userId", p.userId }, { "commentId", p.commentId }, { "body", p.body }, { "rating", p.rating } };
+    j = json_t{ { "userId", p.userId }, { "commentId", p.commentId }, { "body", p.body }, { "rating", p.rating } };
 }
-inline bool from_json(const json& j, CommentInternal& p)
+inline bool from_json(const json_t& j, CommentInternal& p)
 {
     try {
         auto userIdIt = j.find("userId");
@@ -138,11 +138,11 @@ struct CommentExternal {
     int32_t userId;
 };
 
-inline void to_json(json& j, const CommentExternal& p)
+inline void to_json(json_t& j, const CommentExternal& p)
 {
-    j = json{ { "commentId", p.commentId }, { "name", p.name }, { "body", p.body }, { "rating", p.rating }, { "userId", p.userId } };
+    j = json_t{ { "commentId", p.commentId }, { "name", p.name }, { "body", p.body }, { "rating", p.rating }, { "userId", p.userId } };
 }
-inline bool from_json(const json& j, CommentExternal& p)
+inline bool from_json(const json_t& j, CommentExternal& p)
 {
     try {
         auto nameIt = j.find("name");
@@ -170,12 +170,12 @@ struct LikeEntity {
     long long timestamp;
 };
 
-inline void to_json(json& j, const LikeEntity& p)
+inline void to_json(json_t& j, const LikeEntity& p)
 {
-    j = json{ { "commentId", p.commentId }, { "userId", p.userId }, { "timestamp", p.timestamp } };
+    j = json_t{ { "commentId", p.commentId }, { "userId", p.userId }, { "timestamp", p.timestamp } };
 }
 
-inline bool from_json(const json& j, LikeEntity& p)
+inline bool from_json(const json_t& j, LikeEntity& p)
 {
     try {
         auto commentIdIt = j.find("commentId");
@@ -196,10 +196,10 @@ struct LikeEntityExternal {
     long long timestamp;
 };
 
-inline void to_json(json& j, const LikeEntityExternal& p)
+inline void to_json(json_t& j, const LikeEntityExternal& p)
 {
-    j = json{ { "comment", p.comment }, { "name", p.name }, { "timestamp", p.timestamp } };
+    j = json_t{ { "comment", p.comment }, { "name", p.name }, { "timestamp", p.timestamp } };
 }
 }
 
-#endif // JsonStructs_H
+#endif // jsonStructs_H

@@ -17,8 +17,15 @@ void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Re
         response.setStatus(200);
         return;
     }
-    const std::string body = getRequestBody(request);
-    const Wt::Http::Message msg = model->createComment(request.headers(), body);
+    uint32_t userId = 0;
+    if (!model->checkAuth(request.headers(), userId)) {
+        response.setStatus(401);
+        return;
+    }
+
+    std::string body = getRequestBody(request);
+    HttpAssist::addUserId(body, userId);
+    const Wt::Http::Message msg = model->createComment({}, body);
     writeOutput(msg, response);
 }
 
@@ -33,7 +40,14 @@ void Like::handleRequest(const Http::Request& request, Http::Response& response)
         response.setStatus(200);
         return;
     }
-    const std::string body = getRequestBody(request);
-    const Wt::Http::Message& msg = model->like(request.headers(), body);
+    uint32_t userId = 0;
+    if (!model->checkAuth(request.headers(), userId)) {
+        response.setStatus(401);
+        return;
+    }
+
+    std::string body = getRequestBody(request);
+    HttpAssist::addUserId(body, userId);
+    const Wt::Http::Message& msg = model->like({}, body);
     writeOutput(msg, response);
 }

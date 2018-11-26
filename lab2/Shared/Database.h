@@ -4,7 +4,6 @@
 #include "fmt/format.h"
 #include <Wt/Dbo/SqlConnection.h>
 #include <Wt/Dbo/backend/MySQL>
-#include <nlohmann/json.hpp>
 
 using namespace Wt;
 

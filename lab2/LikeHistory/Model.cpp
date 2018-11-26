@@ -11,12 +11,12 @@ Model::Model()
 {
 }
 
-const json Model::getLikes(int32_t page)
+const json_t Model::getLikes(int32_t page)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
 
-    json result = json::array();
+    json_t result = json_t::array();
 
     auto req = db->prepareStatement("SELECT commentId,userId,UNIX_TIMESTAMP(creationDate) from  LikeHistory order by creationDate desc limit ? offset ?");
     req->bind(0, likesPerPage);
@@ -38,12 +38,12 @@ const json Model::getLikes(int32_t page)
     return result;
 }
 
-const json Model::writeLike(int32_t userId, int32_t commentId)
+const json_t Model::writeLike(int32_t userId, int32_t commentId)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
 
-    json result;
+    json_t result;
 
     auto req = db->prepareStatement("INSERT INTO  LikeHistory(userId, commentId) VALUES(?,?)");
     req->bind(0, userId);

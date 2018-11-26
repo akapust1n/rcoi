@@ -10,7 +10,6 @@ export default class Comment extends Component {
             login: this.props.comment.name,
             body: this.props.comment.body,
             rating: this.props.comment.rating,
-            userId: this.props.comment.userId,
             commentId: this.props.comment.commentId,
             isLiked: false,
         };
@@ -21,17 +20,18 @@ export default class Comment extends Component {
     }
 
     incRating() {
-        const userId = this.state.userId;
         const commentId = this.state.commentId;
         const data = JSON.stringify({
             commentId: commentId,
-            userId: userId,
         });
+        const authToken = localStorage.getItem("authtoken");
+
         fetch(this.url, {
             method: 'POST',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authToken
             },
             body: data,
         }).then(res => {

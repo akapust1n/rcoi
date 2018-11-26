@@ -5,7 +5,6 @@ import _parseJSON from "../../HttpAssist"
 export default class CommentFrom extends Component {
     constructor(props) {
         super(props);
-        this.userId = this.props.userId;
         this.newsId = this.props.newsId;
         this.postComment = this.props.postComment;
 
@@ -29,16 +28,17 @@ export default class CommentFrom extends Component {
         event.preventDefault();
         const body = this.state.body;
         const data = JSON.stringify({
-            userId: this.userId,
             text: body,
             newsId: this.newsId
         });
         console.log(data);
+        const authToken = localStorage.getItem("authtoken");
         fetch(this.url, {
             method: 'POST',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authToken
             },
             body: data,
         }).then(res => {
@@ -49,7 +49,7 @@ export default class CommentFrom extends Component {
                 throw new Error();
             }
         }).catch((error) => {
-            alert("Cant create news!");
+            alert("Cant create comment! You must log in");
         })
     }
 

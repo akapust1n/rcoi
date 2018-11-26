@@ -2,11 +2,13 @@ cmake_minimum_required(VERSION 3.1)
 
 project(lab2 CXX)
 
-
+include_directories(3rdpart/cpp-jwt/include)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 SET( CMAKE_BUILD_TYPE "Debug")
+
+
 
 set(CMAKE_CONFIGURATION_TYPES "Debug" CACHE STRING "" FORCE)
 set (CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
@@ -30,6 +32,7 @@ file(GLOB shared_SRC
 file(GLOB 3rdpart_SRC
     "./3rdpart/*.h"
     "./3rdpart/*.cpp"
+
 )
 
 file(GLOB gateway_SRC
