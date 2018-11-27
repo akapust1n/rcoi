@@ -119,6 +119,24 @@ const Http::Message Model::del(const std::vector<Http::Message::Header>& headers
     return result;
 }
 
+const Http::Message Model::getAuthCode(const std::vector<Http::Message::Header>& headers, const std::string& params)
+{
+    const Wt::Http::Message result = getfromService(Users, headers, params, "getAuthCode");
+    return result;
+}
+
+const Http::Message Model::getToken(const std::vector<Http::Message::Header>& headers, const std::string& params)
+{
+    const Wt::Http::Message result = getfromService(Users, headers, params, "getToken");
+    return result;
+}
+
+const Http::Message Model::refreshToken(const std::vector<Http::Message::Header>& headers, const std::string& body)
+{
+    const Wt::Http::Message result = postToService(Users, headers, body, "refreshToken");
+    return result;
+}
+
 const Http::Message Model::like(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
     Wt::Http::Message checkLike = postToService(LikeHistory, headers, body, "writeLike");

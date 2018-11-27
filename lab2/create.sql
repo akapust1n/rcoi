@@ -43,6 +43,13 @@ CREATE TABLE IF NOT EXISTS Tokens (
     kind SMALLINT UNSIGNED NOT NULL
 )  ENGINE=INNODB;
 
+CREATE TABLE IF NOT EXISTS AuthCodes (
+    ID  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    clientId INT NOT NULL,
+    authCode INT NOT NULL,
+    expireTimestamp TIMESTAMP NOT NULL
+)  ENGINE=INNODB;
+
 drop database if exists lab2UsersTest;
 create database lab2UsersTest;
 use lab2UsersTest;

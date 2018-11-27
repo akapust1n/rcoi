@@ -16,6 +16,9 @@ public:
         , incRating(&model)
         , getUsernames(&model)
         , checkAuth(&model)
+        , getAuthCode(&model)
+        , getToken(&model)
+        , refreshToken(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -29,6 +32,9 @@ public:
         server.addResource(&incRating, "/incRating");
         server.addResource(&getUsernames, "/names");
         server.addResource(&checkAuth, "/auth");
+        server.addResource(&getAuthCode, "/getAuthCode");
+        server.addResource(&getToken, "/getToken");
+        server.addResource(&refreshToken, "/refreshToken");
 
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
@@ -42,6 +48,9 @@ private:
     IncRating incRating;
     GetUsernames getUsernames;
     CheckAuth checkAuth;
+    GetAuthCode getAuthCode;
+    GetToken getToken;
+    RefreshToken refreshToken;
     Model model;
 #ifdef IS_TEST_BUILD
     Clear clear;

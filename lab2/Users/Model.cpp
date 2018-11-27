@@ -66,7 +66,7 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
                     obj.add_claim("rand", std::chrono::system_clock::now());
 
                     const std::string token = obj.signature();
-                    req = db->prepareStatement("DELETE FROM Tokens WHERE userId=?");
+                    req = db->prepareStatement("DELETE FROM Tokens WHERE userId=? AND TYPE=0");
                     req->bind(0, ID);
                     req->execute();
                     if (!req) {
@@ -182,6 +182,92 @@ const json_t Model::getNames(const std::vector<int32_t>& ids)
     return result;
 }
 
+int32_t Model::getAuthCode(int32_t clientId)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    int32_t authCode = rand() % 999;
+    int32_t result = -1;
+
+    auto req = db->prepareStatement("INSERT INTO AuthCodes(clientId, authCode, expireTimestamp)"
+                                    " VALUES(?,?,DATE_ADD(NOW(), INTERVAL 10 MINUTE))");
+    req->bind(0, clientId);
+    req->bind(1, authCode);
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        try {
+            req->execute();
+            LOG_INFO("Db request %s", req->sql().c_str());
+            if (req->insertedId() > 0) {
+                result = authCode;
+            }
+
+        } catch (...) {
+            LOG_ERROR("Cant find token");
+        }
+    };
+
+    return result;
+}
+
+json_t Model::getToken(int32_t clientId, int32_t authCode)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    json_t result;
+
+    auto req = db->prepareStatement("SELECT ID from AuthCodes where clientId=? "
+                                    "and authCode=? and "
+                                    " (UNIX_TIMESTAMP(expireTimestamp) - UNIX_TIMESTAMP(NOW()))>0");
+    req->bind(0, clientId);
+    req->bind(1, authCode);
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        try {
+            req->execute();
+            LOG_INFO("Db request %s", req->sql().c_str());
+            if (req->nextRow()) {
+                jwt::jwt_object obj{ algorithm("HS256"), payload({ { "userId", std::to_string(1) } }), secret(key) };
+                obj.add_claim("rand", std::chrono::system_clock::now());
+                const std::string token = obj.signature();
+                jwt::jwt_object objRefresh{ algorithm("HS256"), payload({ { "userId", std::to_string(1) } }), secret(key) };
+                objRefresh.add_claim("rand", std::chrono::system_clock::now() + std::chrono::seconds{ 10 });
+                const std::string tokenRefresh = objRefresh.signature();
+
+                req = db->prepareStatement("INSERT INTO Tokens(token, userId, expireTimestamp, updateTimestamp, kind) "
+                                           "VALUES(?, ?, NOW() + INTERVAL 1 DAY, NOW(),0),"
+                                           "(?, ?, NOW() + INTERVAL 1 DAY, NOW(), 1)");
+                if (!req) {
+                    LOG_ERROR("Cant prepare statement");
+                } else {
+                    req->bind(0, token);
+                    req->bind(1, 1); //hardcoded userId
+                    req->bind(2, tokenRefresh); //hardcoded userId
+                    req->bind(3, 1); //hardcoded userId
+
+                    LOG_INFO("Db request %s", req->sql().c_str());
+                    try {
+                        req->execute();
+                        std::cout << "INS ID" << req->insertedId() << std::endl;
+                        if (req->affectedRowCount() > 0) {
+                            std::cout << "TOKENS CREATED" << std::endl;
+                            result["authtoken"] = token;
+                            result["refreshtoken"] = tokenRefresh;
+                        }
+                    } catch (...) {
+                        LOG_INFO("can create token!");
+                    }
+                }
+            }
+
+        } catch (...) {
+            LOG_ERROR("Cant insert tokens");
+        }
+    }
+    return result;
+}
 uint32_t Model::checkAuth(uint32_t userId, const std::string& token)
 {
     if (!db)
@@ -189,12 +275,11 @@ uint32_t Model::checkAuth(uint32_t userId, const std::string& token)
     uint32_t result = 401;
     auto req = db->prepareStatement("SELECT ID "
                                     "FROM Tokens WHERE userId=? and token=? AND "
-                                    " (UNIX_TIMESTAMP(expireTimestamp) - UNIX_TIMESTAMP(NOW())) BETWEEN 0 AND ? AND"
+                                    "  (UNIX_TIMESTAMP(expireTimestamp) - UNIX_TIMESTAMP(NOW())) > 0 AND"
                                     " UNIX_TIMESTAMP(NOW()) - (UNIX_TIMESTAMP(updateTimestamp))< ?");
     req->bind(0, static_cast<int32_t>(userId));
     req->bind(1, token);
-    req->bind(2, timeLiveUserToken);
-    req->bind(3, logoutTime);
+    req->bind(2, logoutTime);
 
     if (!req) {
         LOG_ERROR("Cant prepare statement");
@@ -210,6 +295,60 @@ uint32_t Model::checkAuth(uint32_t userId, const std::string& token)
                 req->execute();
             }
 
+        } catch (...) {
+            LOG_ERROR("Cant find token");
+        }
+    };
+
+    return result;
+}
+
+json_t Model::refreshToken(const std::string& token)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+    json_t result;
+    auto req = db->prepareStatement("SELECT ID FROM Tokens where token=? and kind=1");
+    req->bind(0, token);
+
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        try {
+            req->execute();
+            LOG_INFO("Db request %s", req->sql().c_str());
+            if (req->nextRow()) {
+                jwt::jwt_object obj{ algorithm("HS256"), payload({ { "userId", std::to_string(1) } }), secret(key) };
+                obj.add_claim("rand", std::chrono::system_clock::now());
+                const std::string token = obj.signature();
+                jwt::jwt_object objRefresh{ algorithm("HS256"), payload({ { "userId", std::to_string(1) } }), secret(key) };
+                objRefresh.add_claim("rand", std::chrono::system_clock::now() + std::chrono::seconds{ 10 });
+                const std::string tokenRefresh = objRefresh.signature();
+
+                req = db->prepareStatement("INSERT INTO Tokens(token, userId, expireTimestamp, updateTimestamp, kind) "
+                                           "VALUES(?, ?, NOW() + INTERVAL 1 DAY, NOW(),0),"
+                                           "(?, ?, NOW() + INTERVAL 1 DAY, NOW(), 1)");
+                if (!req) {
+                    LOG_ERROR("Cant prepare statement");
+                } else {
+                    req->bind(0, token);
+                    req->bind(1, 1); //hardcoded userId
+                    req->bind(2, tokenRefresh); //hardcoded userId
+                    req->bind(3, 1); //hardcoded userId
+                    LOG_INFO("Db request %s", req->sql().c_str());
+                    try {
+                        req->execute();
+                        std::cout << "INS ID" << req->insertedId() << std::endl;
+                        if (req->affectedRowCount() > 0) {
+                            std::cout << "TOKENS CREATED" << std::endl;
+                            result["authtoken"] = token;
+                            result["refreshtoken"] = tokenRefresh;
+                        }
+                    } catch (...) {
+                        LOG_INFO("cant create token!");
+                    }
+                }
+            }
         } catch (...) {
             LOG_ERROR("Cant find token");
         }

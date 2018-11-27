@@ -5,6 +5,7 @@
 
 using namespace ns;
 using namespace HttpAssist;
+const int32_t hardCodedClientSecret = 123;
 
 Login::Login(Model* _model)
     : Base(_model)
@@ -156,6 +157,77 @@ void CheckAuth::handleRequest(const Http::Request& request, Http::Response& resp
         response.setStatus(model->checkAuth(userId, *token));
         response.out() << result;
     } catch (...) {
+        response.setStatus(401);
+    }
+}
+
+GetAuthCode::GetAuthCode(Model* _model)
+    : Base(_model)
+{
+}
+
+void GetAuthCode::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    const int32_t clientId = extractPositiveParam(request, "client_id");
+    const std::string callbackUrl = extractStringParam(request, "callback_url");
+    if (clientId == -1 or callbackUrl.empty()) {
+        response.setStatus(400);
+        return;
+    }
+    int32_t authCode = model->getAuthCode(clientId);
+    if (authCode > 0) {
+        const std::string location = callbackUrl + "?code=" + std::to_string(authCode);
+        std::cout << "LOCATION " << location << std::endl;
+        response.addHeader("Location", location);
+        response.setStatus(302);
+    } else {
+        response.setStatus(400);
+    }
+}
+GetToken::GetToken(Model* _model)
+    : Base(_model)
+{
+}
+void GetToken::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    const int32_t clientId = extractPositiveParam(request, "client_id");
+    const int32_t authCode = extractPositiveParam(request, "code");
+
+    const int32_t clientSecret = extractPositiveParam(request, "client_secret");
+    const std::string callbackUrl = extractStringParam(request, "callback_url");
+    if (clientId == -1 or callbackUrl.empty() or clientSecret != 123) {
+        response.setStatus(400);
+        return;
+    }
+    const json_t tokens = model->getToken(clientId, authCode);
+    if (!tokens.empty()) {
+        response.out() << tokens.dump();
+        response.addHeader("Location", callbackUrl);
+        response.setStatus(200);
+    } else {
+        response.setStatus(401);
+    }
+}
+
+RefreshToken::RefreshToken(Model* _model)
+    : Base(_model)
+{
+}
+
+void RefreshToken::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    json_t refreshTokenJson = tryParsejson(getRequestBody(request));
+    auto refreshTokenIt = refreshTokenJson.find("refreshToken");
+    if (request.method() != "POST" or refreshTokenIt == refreshTokenJson.end()) {
+        response.setStatus(403);
+        return;
+    }
+    const std::string refreshToken = refreshTokenIt.value().get<std::string>();
+    json_t result = model->refreshToken(refreshToken);
+    if (!result.empty()) {
+        response.out() << result.dump();
+        response.setStatus(200);
+    } else {
         response.setStatus(401);
     }
 }

@@ -27,6 +27,9 @@ public:
     const Wt::Http::Message login(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message reg(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message del(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
+    const Wt::Http::Message getAuthCode(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
+    const Wt::Http::Message getToken(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
+    const Wt::Http::Message refreshToken(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message like(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message getOneNews(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
     const Wt::Http::Message history(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);

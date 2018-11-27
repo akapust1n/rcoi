@@ -21,6 +21,9 @@ public:
         , createNews(&model)
         , oneNews(&model)
         , history(&model)
+        , getAuthCode(&model)
+        , getToken(&model)
+        , refreshToken(&model)
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -37,6 +40,9 @@ public:
         server.addResource(&reg, "/register");
         server.addResource(&oneNews, "/oneNews");
         server.addResource(&history, "/history");
+        server.addResource(&getAuthCode, "/getAuthCode");
+        server.addResource(&getToken, "/getToken");
+        server.addResource(&refreshToken, "/refreshToken");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -53,6 +59,9 @@ private:
     OneNews oneNews;
     Model model;
     History history;
+    GetAuthCode getAuthCode;
+    GetToken getToken;
+    RefreshToken refreshToken;
 #ifdef IS_TEST_BUILD
     Clear clear;
 #endif
