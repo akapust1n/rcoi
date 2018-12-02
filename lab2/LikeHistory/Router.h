@@ -12,18 +12,21 @@ public:
     Router()
         : getLikes(&model)
         , writeLike(&model)
+        , authService(&model, Model::getSecretKey())
     {
     }
     void route(WServer& server)
     {
         server.addResource(&getLikes, "/getLikes");
         server.addResource(&writeLike, "/writeLike");
+        server.addResource(&authService, "/authService");
     }
 
 private:
     GetLikes getLikes;
     WriteLike writeLike;
     Model model;
+    AuthService authService;
 };
 
 #endif // ROUTER_H

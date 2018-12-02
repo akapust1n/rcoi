@@ -13,6 +13,10 @@ GetLikes::GetLikes(Model* _model)
 
 void GetLikes::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     int32_t page = extractPositiveParam(request, "page");
     if (request.method() != "GET") {
         response.setStatus(403);
@@ -34,6 +38,10 @@ WriteLike::WriteLike(Model* _model)
 
 void WriteLike::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     json_t likeEntityjson = tryParsejson(getRequestBody(request));
     LikeEntity likeEntity;
     if (request.method() != "POST" or !from_json(likeEntityjson, likeEntity)) {

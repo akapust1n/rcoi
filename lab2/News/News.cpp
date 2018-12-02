@@ -13,6 +13,10 @@ GetTitles::GetTitles(Model* _model)
 
 void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     int32_t page = extractPositiveParam(request, "page");
     if (request.method() != "GET" or page < 0) {
         response.setStatus(403);
@@ -34,6 +38,10 @@ CreateNews::CreateNews(Model* _model)
 
 void CreateNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     json_t newsjson = tryParsejson(getRequestBody(request));
     News news;
     if (request.method() != "POST" or !from_json(newsjson, news)) {
@@ -60,6 +68,10 @@ GetNews::GetNews(Model* _model)
 
 void GetNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     std::cout << "BEFORE GET NEWS" << std::endl;
     int32_t newsId = extractPositiveParam(request, "newsId");
     std::cout << "AFTER GET NEWS " << newsId << std::endl;

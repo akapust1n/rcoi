@@ -66,12 +66,12 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
                     obj.add_claim("rand", std::chrono::system_clock::now());
 
                     const std::string token = obj.signature();
-                    req = db->prepareStatement("DELETE FROM Tokens WHERE userId=? AND TYPE=0");
+                    req = db->prepareStatement("DELETE FROM Tokens WHERE userId=? AND kind=0");
                     req->bind(0, ID);
-                    req->execute();
                     if (!req) {
                         LOG_ERROR("Cant prepare statement");
                     } else {
+                        req->execute();
                         req = db->prepareStatement("INSERT INTO Tokens(token, userId, expireTimestamp, updateTimestamp) "
                                                    "VALUES(?, ?, NOW() + INTERVAL 1 DAY, NOW())");
                         if (!req) {

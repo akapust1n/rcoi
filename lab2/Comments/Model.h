@@ -16,6 +16,7 @@ public:
     const json_t likeComment(int32_t commentId);
     const json_t getComments(int32_t newsId, int32_t page);
     const json_t getCommentsById(const std::vector<int32_t>& ids);
+    static std::string getSecretKey() { return "comments"; }
 #ifdef IS_TEST_BUILD
     const json clear();
 #endif

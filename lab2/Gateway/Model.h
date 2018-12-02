@@ -1,6 +1,7 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include "../Shared/HttpAssist.h"
+#include "../Shared/JsonStructs.h"
 #include <Wt/Http/Client>
 #include <Wt/Http/Response>
 #include <array>
@@ -41,9 +42,13 @@ private:
     const Wt::Http::Message deletefromService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);
     const Wt::Http::Message getfromService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& params, const std::string& path);
     const Http::Message postToService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);
+    void getAuthService(std::vector<Http::Message::Header>& headers, Service service);
 
 private:
     std::array<std::string, ServiceCount> skServicePaths = { HttpAssist::skUrlNews, HttpAssist::skUrlComments, HttpAssist::skUrlUsers, HttpAssist::skUrlLikeHistory };
+    std::map<Service, std::string> serviceTokens;
+    std::map<Service, std::string> secretServiceStrings = { { News, "news" }, { Comments, "comments" },
+        { Users, "users" }, { LikeHistory, "likehistory" } };
 };
 
 #endif // MODEL_H

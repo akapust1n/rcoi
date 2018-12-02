@@ -21,6 +21,8 @@ public:
     json_t getToken(int32_t clientId, int32_t authCode);
     uint32_t checkAuth(uint32_t userId, const std::string& token);
     json_t refreshToken(const std::string& token);
+    static std::string getSecretKey() { return "users"; }
+
 #ifdef IS_TEST_BUILD
     const json clear();
 #endif

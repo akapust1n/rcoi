@@ -14,6 +14,7 @@ public:
     const json_t getTitles(int32_t page);
     const json_t createNews(const std::string& title, const std::string& body);
     const json_t getNews(int32_t newsId);
+    static std::string getSecretKey() { return "news"; }
 #ifdef IS_TEST_BUILD
     const json clear();
 #endif
