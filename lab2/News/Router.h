@@ -13,6 +13,7 @@ public:
         : getTitles(&model)
         , createNews(&model)
         , getNews(&model)
+        , authService(&model, Model::getSecretKey())
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -23,6 +24,8 @@ public:
         server.addResource(&getTitles, "/titles");
         server.addResource(&createNews, "/createNews");
         server.addResource(&getNews, "/getnews");
+        server.addResource(&authService, "/authService");
+
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -33,6 +36,7 @@ private:
     CreateNews createNews;
     GetNews getNews;
     Model model;
+    AuthService authService;
 #ifdef IS_TEST_BUILD
     Clear clear;
 #endif

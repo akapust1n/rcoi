@@ -1,16 +1,19 @@
 #include "Model.h"
-#include "../Shared/HttpAssist.h"
-#include "../Shared/JsonStructs.h"
+
 #include <map>
 #include <tuple>
 
 using namespace HttpAssist;
 using namespace ns;
+const std::string secretService = "gateway";
+using namespace jwt::params;
 
 const Wt::Http::Message Model::getfromService(Service service, const std::vector<Http::Message::Header>& headers, const std::string& params, const std::string& path)
 {
     Client client;
-    client.get(skServicePaths[service] + "/" + path + "?" + params, headers);
+    std::vector<Http::Message::Header> newHeaders = headers;
+    getAuthService(newHeaders, service);
+    client.get(skServicePaths[service] + "/" + path + "?" + params, newHeaders);
     client.waitDone();
     return client.message();
 }
@@ -20,10 +23,45 @@ const Http::Message Model::postToService(Model::Service service, const std::vect
     Client client;
     Http::Message msg;
     msg.addBodyText(body);
-    writeHeaders(msg, headers);
+    std::vector<Http::Message::Header> newHeaders = headers;
+    getAuthService(newHeaders, service);
+    writeHeaders(msg, newHeaders);
     client.post(skServicePaths[service] + "/" + path, msg);
     client.waitDone();
     return client.message();
+}
+
+void Model::getAuthService(std::vector<Http::Message::Header>& headers, Service service)
+{
+    Client client;
+    auto auth = [&]() {
+        jwt::jwt_object obj{ algorithm("HS256"), payload({}), secret(secretService) };
+        obj.add_claim("exp", std::chrono::system_clock::now() + std::chrono::minutes(30));
+        const std::string token = obj.signature();
+
+        Http::Message::Header serviceHeader("serviceheader", token);
+        std::vector<Http::Message::Header> newHeaders;
+        newHeaders.push_back(serviceHeader);
+        client.get(skServicePaths[service] + "/" + "authService", newHeaders);
+        client.waitDone();
+        json_t tokenJson = tryParsejson(client.message().body());
+        Http::Message::Header outputHeader("serviceheader", tokenJson["token"]);
+        std::cout << " EEE" << tokenJson["token"] << std::endl;
+        headers.push_back(outputHeader);
+    };
+
+    if (!serviceTokens[service].empty()) {
+        try {
+            auto dec_obj = jwt::decode(serviceTokens[service], algorithms({ "hs256" }), secret(secretServiceStrings[service]), verify(true));
+            Http::Message::Header serviceHeader("serviceheader", dec_obj.signature()); //todo add delay 10 min
+            headers.push_back(serviceHeader);
+            serviceTokens[service] = dec_obj.signature();
+        } catch (...) {
+            auth();
+        }
+    } else {
+        auth();
+    }
 }
 
 const Http::Message Model::deletefromService(Model::Service service, const std::vector<Http::Message::Header>& headers, const std::string& body, const std::string& path)
@@ -31,7 +69,9 @@ const Http::Message Model::deletefromService(Model::Service service, const std::
     Client client;
     Http::Message msg;
     msg.addBodyText(body);
-    writeHeaders(msg, headers);
+    std::vector<Http::Message::Header> newHeaders = headers;
+    getAuthService(newHeaders, service);
+    writeHeaders(msg, newHeaders);
     client.deleteRequest(skServicePaths[service] + "/" + path, msg);
     client.waitDone();
     return client.message();

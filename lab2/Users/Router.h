@@ -19,6 +19,7 @@ public:
         , getAuthCode(&model)
         , getToken(&model)
         , refreshToken(&model)
+        , authService(&model, Model::getSecretKey())
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -35,6 +36,7 @@ public:
         server.addResource(&getAuthCode, "/getAuthCode");
         server.addResource(&getToken, "/getToken");
         server.addResource(&refreshToken, "/refreshToken");
+        server.addResource(&authService, "/authService");
 
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
@@ -51,7 +53,9 @@ private:
     GetAuthCode getAuthCode;
     GetToken getToken;
     RefreshToken refreshToken;
+    AuthService authService;
     Model model;
+
 #ifdef IS_TEST_BUILD
     Clear clear;
 #endif

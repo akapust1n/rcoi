@@ -16,6 +16,7 @@ public:
         , likeComment(&model)
         , getComments(&model)
         , getCommentsById(&model)
+        , authService(&model, Model::getSecretKey())
 #ifdef IS_TEST_BUILD
         , clear(&model)
 #endif
@@ -29,6 +30,7 @@ public:
         server.addResource(&likeComment, "/like");
         server.addResource(&getComments, "/getComments");
         server.addResource(&getCommentsById, "/commentsById");
+        server.addResource(&authService, "/authService");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
@@ -41,6 +43,7 @@ private:
     LikeComment likeComment;
     GetComments getComments;
     GetCommentsById getCommentsById;
+    AuthService authService;
     Model model;
 #ifdef IS_TEST_BUILD
     Clear clear;

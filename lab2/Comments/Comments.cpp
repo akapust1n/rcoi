@@ -14,6 +14,10 @@ CreateComment::CreateComment(Model* _model)
 
 void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     json_t commentjson = tryParsejson(getRequestBody(request));
     Comment comment;
     std::cout << commentjson.dump() << std::endl;
@@ -37,6 +41,10 @@ LikeComment::LikeComment(Model* _model)
 
 void LikeComment::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     json_t body = tryParsejson(getRequestBody(request));
     int32_t id = body["commentId"].get<int32_t>();
     if (request.method() != "POST" or !body.count("commentId")) {
@@ -59,6 +67,10 @@ CountComment::CountComment(Model* _model)
 
 void CountComment::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     auto ids = request.getParameterValues("id");
     if (request.method() != "GET") {
         response.setStatus(403);
@@ -106,6 +118,10 @@ GetComments::GetComments(Model* _model)
 
 void GetComments::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     int32_t newsId = extractPositiveParam(request, "newsId");
     int32_t page = extractPositiveParam(request, "page");
     if (request.method() != "GET" or newsId < 0 or page < 0) {
@@ -142,6 +158,10 @@ GetCommentsById::GetCommentsById(Model* _model)
 
 void GetCommentsById::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     auto ids = request.getParameterValues("id");
     if (request.method() != "GET") {
         response.setStatus(403);

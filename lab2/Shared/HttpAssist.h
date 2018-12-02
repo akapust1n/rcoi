@@ -1,13 +1,16 @@
 #ifndef SHAREDHTTP_H
 #define SHAREDHTTP_H
 #include "../3rdpart/macrologger.h"
+#include "JsonStructs.h"
 #include <Wt/Http/Client>
 #include <Wt/Http/Response>
 #include <Wt/WResource>
 #include <Wt/WServer>
 #include <algorithm>
 #include <boost/algorithm/string.hpp>
+#include <chrono>
 #include <climits>
+#include <ctime>
 #include <functional>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -162,6 +165,30 @@ inline void addUserId(std::string& body, uint32_t userId)
     bodyJson["userId"] = userId;
     std::cout << "BODY AFTER" << bodyJson.dump() << std::endl;
     body = bodyJson.dump();
+}
+
+inline bool checkAuth(const Wt::Http::Request& request, const std::string& secretKey)
+{
+    using namespace jwt::params;
+    using namespace std::chrono;
+    try {
+        std::error_code ec;
+        const std::string header = request.headerValue("serviceheader");
+        auto dec_obj = jwt::decode(header, algorithms({ "hs256" }), ec, secret(secretKey));
+
+        const std::time_t exp = static_cast<std::time_t>(dec_obj.payload().get_claim_value<uint64_t>("exp"));
+        auto nowTimePoint = std::chrono::system_clock::now();
+        const std::time_t nowPlus10Min = system_clock::to_time_t(nowTimePoint + minutes(10));
+        std::cout << "TIME BEFORe " << exp << std::endl;
+        std::cout << "TIME after " << nowPlus10Min << std::endl;
+
+        if (nowPlus10Min > exp) {
+            throw 0;
+        }
+        return true;
+    } catch (...) {
+        return false;
+    };
 }
 }
 

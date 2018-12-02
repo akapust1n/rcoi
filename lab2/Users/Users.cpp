@@ -14,6 +14,11 @@ Login::Login(Model* _model)
 
 void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
+
     json_t userAuthjson = tryParsejson(getRequestBody(request));
     UserAuth userAuth;
     if (request.method() != "POST" or !from_json(userAuthjson, userAuth)) {
@@ -36,6 +41,10 @@ Reg::Reg(Model* _model)
 
 void Reg::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     json_t userAuthjson = tryParsejson(getRequestBody(request));
     UserAuth userAuth;
     if (request.method() != "POST" or !from_json(userAuthjson, userAuth)) {
@@ -83,6 +92,10 @@ IncRating::IncRating(Model* _model)
 
 void IncRating::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     json_t userIdjson = tryParsejson(getRequestBody(request));
     auto userIdIt = userIdjson.find("userId");
     if (request.method() != "POST" or userIdIt == userIdjson.end()) {
@@ -105,6 +118,10 @@ GetUsernames::GetUsernames(Model* _model)
 
 void GetUsernames::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     auto ids = request.getParameterValues("id");
     if (request.method() != "GET") {
         response.setStatus(403);
@@ -143,6 +160,10 @@ CheckAuth::CheckAuth(Model* _model)
 
 void CheckAuth::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     auto token = request.getParameter("token");
     if (request.method() != "GET" or token == nullptr or ((*token).empty())) {
         response.setStatus(403);
@@ -168,6 +189,10 @@ GetAuthCode::GetAuthCode(Model* _model)
 
 void GetAuthCode::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     const int32_t clientId = extractPositiveParam(request, "client_id");
     const std::string callbackUrl = extractStringParam(request, "callback_url");
     if (clientId == -1 or callbackUrl.empty()) {
@@ -190,6 +215,10 @@ GetToken::GetToken(Model* _model)
 }
 void GetToken::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     const int32_t clientId = extractPositiveParam(request, "client_id");
     const int32_t authCode = extractPositiveParam(request, "code");
 
@@ -216,6 +245,10 @@ RefreshToken::RefreshToken(Model* _model)
 
 void RefreshToken::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        response.setStatus(401);
+        return;
+    }
     json_t refreshTokenJson = tryParsejson(getRequestBody(request));
     auto refreshTokenIt = refreshTokenJson.find("refreshToken");
     if (request.method() != "POST" or refreshTokenIt == refreshTokenJson.end()) {
