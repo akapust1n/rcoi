@@ -13,6 +13,10 @@ void History::handleRequest(const Http::Request& request, Http::Response& respon
         response.setStatus(200);
         return;
     }
+    if (request.method() != "GET") {
+        WriteResponse(response, 403);
+        return;
+    }
     const Wt::Http::Message msg = model->history(request.headers(), request.queryString());
     writeOutput(msg, response);
 }

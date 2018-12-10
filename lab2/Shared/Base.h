@@ -27,8 +27,8 @@ protected:
     void writeOutput(const Wt::Http::Message& msg, Wt::Http::Response& response)
     {
         HttpAssist::writeHeaders(response, msg.headers());
-        response.out() << msg.body();
-        response.setStatus(msg.status());
+        response.out() << (msg.body().empty() ? HttpAssist::ResponseAsssist::TimeoutError() : msg.body());
+        response.setStatus(msg.status() > 0 ? msg.status() : 500);
     }
 };
 class AuthService : public Base {
@@ -54,7 +54,7 @@ protected:
             response.setStatus(200);
             response.out() << result.dump();
         } catch (...) {
-            response.setStatus(401);
+            response.setStatus(400);
         }
     }
     const std::string secretKey;

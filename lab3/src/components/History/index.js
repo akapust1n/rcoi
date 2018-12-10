@@ -26,7 +26,12 @@ export default class History extends Component {
                 let comments = await _parseJSON(res);
                 this.setState({ comments: comments });
             } else {
-                alert("cant load history!");
+                const response = await _parseJSON(res);
+                if (response["error"] !== undefined)
+                    alert(response["error"]);
+                else {
+                    alert("smth wrong!");
+                }
             }
         }
         request();

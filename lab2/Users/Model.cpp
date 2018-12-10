@@ -272,7 +272,7 @@ uint32_t Model::checkAuth(uint32_t userId, const std::string& token)
 {
     if (!db)
         db = Db::GetInst()->GetMysql();
-    uint32_t result = 401;
+    uint32_t result = 400;
     auto req = db->prepareStatement("SELECT ID "
                                     "FROM Tokens WHERE userId=? and token=? AND "
                                     "  (UNIX_TIMESTAMP(expireTimestamp) - UNIX_TIMESTAMP(NOW())) > 0 AND"

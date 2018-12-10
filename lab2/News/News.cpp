@@ -14,18 +14,17 @@ GetTitles::GetTitles(Model* _model)
 void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     int32_t page = extractPositiveParam(request, "page");
     if (request.method() != "GET" or page < 0) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
         return;
     }
     json_t news = model->getTitles(page);
     if (news.empty()) {
-        response.setStatus(500);
-        response.out() << "Cant find news";
+        WriteResponse(response, 500);
         return;
     }
     response.out() << news.dump();
@@ -39,23 +38,23 @@ CreateNews::CreateNews(Model* _model)
 void CreateNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     json_t newsjson = tryParsejson(getRequestBody(request));
     News news;
     if (request.method() != "POST" or !from_json(newsjson, news)) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
         return;
     }
     if (news.title.size() < 1 or news.body.size() < 1) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
         return;
     }
 
     json_t newsResponse = model->createNews(news.title, news.body);
     if (newsResponse.empty()) {
-        response.setStatus(500);
+        WriteResponse(response, 500);
         return;
     }
     response.out() << newsResponse.dump();
@@ -69,14 +68,14 @@ GetNews::GetNews(Model* _model)
 void GetNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     std::cout << "BEFORE GET NEWS" << std::endl;
     int32_t newsId = extractPositiveParam(request, "newsId");
     std::cout << "AFTER GET NEWS " << newsId << std::endl;
     if (request.method() != "GET" or newsId < 0) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
         return;
     }
     std::cout << "BEFORE GET MODEL" << std::endl;
@@ -84,8 +83,7 @@ void GetNews::handleRequest(const Http::Request& request, Http::Response& respon
     std::cout << "AFTER GET MODEL" << std::endl;
 
     if (news.empty()) {
-        response.out() << "Cant find news";
-        response.setStatus(500);
+        WriteResponse(response, 500);
         return;
     }
     response.out() << news.dump();

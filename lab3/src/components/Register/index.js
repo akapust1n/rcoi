@@ -40,11 +40,12 @@ export default class Login extends Component {
                 'Content-Type': 'application/json',
             },
             body: data,
-        }).then(res => {
+        }).then(async res => {
             if (res.status === 200) {
                 return _parseJSON(res);
             } else {
-                throw new Error();
+                const response = await _parseJSON(res);
+                alert(response["error"]);
             }
         }).then(json => { alert("register is ok"); })
             .catch((error) => {

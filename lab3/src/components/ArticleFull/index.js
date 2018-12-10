@@ -34,7 +34,8 @@ export default class ArticleFull extends Component {
                 this.article = article;
                 this.setState({ isLoaded: true });
             } else {
-                alert("cant load news!");
+                const response = await _parseJSON(res);
+                alert(response["error"]);
             }
         }
         request();

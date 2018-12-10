@@ -1,7 +1,9 @@
 #include "Model.h"
 
+#include <chrono>
 #include <map>
 #include <tuple>
+const std::chrono::seconds timeout(2);
 
 using namespace HttpAssist;
 using namespace ns;
@@ -11,6 +13,7 @@ using namespace jwt::params;
 const Wt::Http::Message Model::getfromService(Service service, const std::vector<Http::Message::Header>& headers, const std::string& params, const std::string& path)
 {
     Client client;
+    client.setTimeout(timeout);
     std::vector<Http::Message::Header> newHeaders = headers;
     getAuthService(newHeaders, service);
     client.get(skServicePaths[service] + "/" + path + "?" + params, newHeaders);
@@ -21,6 +24,7 @@ const Wt::Http::Message Model::getfromService(Service service, const std::vector
 const Http::Message Model::postToService(Model::Service service, const std::vector<Http::Message::Header>& headers, const std::string& body, const std::string& path)
 {
     Client client;
+    client.setTimeout(timeout);
     Http::Message msg;
     msg.addBodyText(body);
     std::vector<Http::Message::Header> newHeaders = headers;
@@ -34,6 +38,7 @@ const Http::Message Model::postToService(Model::Service service, const std::vect
 void Model::getAuthService(std::vector<Http::Message::Header>& headers, Service service)
 {
     Client client;
+    client.setTimeout(timeout);
     auto auth = [&]() {
         jwt::jwt_object obj{ algorithm("HS256"), payload({}), secret(secretService) };
         obj.add_claim("exp", std::chrono::system_clock::now() + std::chrono::minutes(30));
@@ -44,10 +49,12 @@ void Model::getAuthService(std::vector<Http::Message::Header>& headers, Service 
         newHeaders.push_back(serviceHeader);
         client.get(skServicePaths[service] + "/" + "authService", newHeaders);
         client.waitDone();
-        json_t tokenJson = tryParsejson(client.message().body());
-        Http::Message::Header outputHeader("serviceheader", tokenJson["token"]);
-        std::cout << " EEE" << tokenJson["token"] << std::endl;
-        headers.push_back(outputHeader);
+        if (client.message().status() > 0) {
+            json_t tokenJson = tryParsejson(client.message().body());
+            Http::Message::Header outputHeader("serviceheader", tokenJson["token"]);
+            std::cout << " EEE" << tokenJson["token"] << std::endl;
+            headers.push_back(outputHeader);
+        }
     };
 
     if (!serviceTokens[service].empty()) {
@@ -67,6 +74,7 @@ void Model::getAuthService(std::vector<Http::Message::Header>& headers, Service 
 const Http::Message Model::deletefromService(Model::Service service, const std::vector<Http::Message::Header>& headers, const std::string& body, const std::string& path)
 {
     Client client;
+    client.setTimeout(timeout);
     Http::Message msg;
     msg.addBodyText(body);
     std::vector<Http::Message::Header> newHeaders = headers;
@@ -86,21 +94,21 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
         json_t titles = json_t::parse(msg.body()); //trust that json is valid
         std::string newsIds;
         std::map<int32_t, Title> titlesMap;
-        for (auto newsIt = titles.cbegin(); newsIt != titles.cend(); ++newsIt) {
-            const int32_t ID = (*newsIt)["ID"].get<int32_t>();
+        for (auto titlesIt = titles.cbegin(); titlesIt != titles.cend(); ++titlesIt) {
+            const int32_t ID = (*titlesIt)["ID"].get<int32_t>();
             newsIds += std::string("id=") + std::to_string(ID) + "&";
             Title title;
-            title.title = (*newsIt)["title"].get<std::string>();
-            title.timestamp = (*newsIt)["timestamp"].get<long long>();
+            title.title = (*titlesIt)["title"].get<std::string>();
+            title.timestamp = (*titlesIt)["timestamp"].get<long long>();
             titlesMap[ID] = title;
         }
         if (newsIds.begin() != newsIds.end())
             newsIds.erase(newsIds.end() - 1); //remove last &
 
         const Wt::Http::Message& msgComments = getfromService(Comments, headers, newsIds, "count");
+        json_t titlesArray = json_t::array();
         if (msgComments.status() == 200) {
             json_t countComments = json_t::parse(msgComments.body()); //trust that json is valid
-            json_t titlesArray = json_t::array();
             for (auto countIt = countComments.cbegin(); countIt != countComments.cend(); ++countIt) {
                 Title title;
                 title.ID = (*countIt)["id"].get<int32_t>();
@@ -112,16 +120,27 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
                     titlesArray.push_back(titlejson);
                 }
             }
-            result.setStatus(200);
-            result.addBodyText(titlesArray.dump());
-            writeHeaders(result, headers);
+
         } else {
-            LOG_ERROR("%s", "Comment service error");
-            result.setStatus(msgComments.status());
+            LOG_ERROR("%s", "Comment service error. Degradation");
+            for (auto titlesIt = titlesMap.cbegin(); titlesIt != titlesMap.cend(); ++titlesIt) {
+                Title title;
+                title.ID = titlesIt->first;
+                title.title = titlesIt->second.title;
+                title.timestamp = titlesIt->second.timestamp;
+                if (!title.title.empty()) {
+                    json_t titlejson = title;
+                    titlesArray.push_back(titlejson);
+                }
+            }
         }
+        result.setStatus(200);
+        result.addBodyText(titlesArray.dump());
+        writeHeaders(result, headers);
     } else {
         LOG_ERROR("%s", "News service error");
         result.setStatus(msg.status());
+        result.addBodyText(msg.body());
     }
     return result;
 }
@@ -253,14 +272,17 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
             } else {
                 LOG_ERROR("User service error");
                 result.setStatus(getUsernames.status());
+                result.addBodyText(getUsernames.body());
             }
         } else {
             LOG_ERROR("Comments service error");
             result.setStatus(getComments.status());
+            result.addBodyText(getComments.body());
         }
     } else {
         LOG_ERROR("News service error");
         result.setStatus(getNews.status());
+        result.addBodyText(getNews.body());
     }
 
     return result;
@@ -315,11 +337,18 @@ const Http::Message Model::history(const std::vector<Http::Message::Header>& hea
             result.setStatus(200);
         } else {
             LOG_ERROR("User or comments service error");
-            result.setStatus(getUsernames.status());
+            if (getUsernames.status() != 200) {
+                result.setStatus(getUsernames.status());
+                result.addBodyText(getUsernames.body());
+            } else {
+                result.setStatus(getComments.status());
+                result.addBodyText(getComments.body());
+            }
         }
     } else {
         LOG_ERROR("LikeHistory service error");
         result.setStatus(getHistory.status());
+        result.addBodyText(getHistory.body());
     }
     return result;
 }

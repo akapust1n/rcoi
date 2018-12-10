@@ -15,20 +15,21 @@ CreateComment::CreateComment(Model* _model)
 void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     json_t commentjson = tryParsejson(getRequestBody(request));
     Comment comment;
     std::cout << commentjson.dump() << std::endl;
     if (request.method() != "POST" or !from_json(commentjson, comment)) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
+        ;
         return;
     }
 
     json_t newsResponse = model->createComment(comment.userId, comment.newsId, comment.text);
     if (newsResponse.empty()) {
-        response.setStatus(500);
+        WriteResponse(response, 500);
         return;
     }
     response.out() << newsResponse.dump();
@@ -42,19 +43,19 @@ LikeComment::LikeComment(Model* _model)
 void LikeComment::handleRequest(const Http::Request& request, Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     json_t body = tryParsejson(getRequestBody(request));
     int32_t id = body["commentId"].get<int32_t>();
     if (request.method() != "POST" or !body.count("commentId")) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
+        ;
         return;
     }
     json_t likeResult = model->likeComment(id);
     if (likeResult.empty()) {
-        response.out() << "Cant like comment";
-        response.setStatus(500);
+        WriteResponse(response, 500);
         return;
     }
     response.out() << likeResult.dump();
@@ -68,12 +69,13 @@ CountComment::CountComment(Model* _model)
 void CountComment::handleRequest(const Http::Request& request, Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     auto ids = request.getParameterValues("id");
     if (request.method() != "GET") {
-        response.setStatus(403);
+        WriteResponse(response, 403);
+        ;
         return;
     }
     std::vector<int32_t> idsInt;
@@ -82,7 +84,6 @@ void CountComment::handleRequest(const Http::Request& request, Http::Response& r
     }
     json_t comments = model->countComments(idsInt);
     if (comments.empty()) {
-        response.out() << "Cant count comments";
         response.setStatus(200);
         return;
     }
@@ -99,13 +100,13 @@ void DeleteComments::handleRequest(const Http::Request& request, Http::Response&
     json_t body = tryParsejson(getRequestBody(request));
     int32_t id = body["userId"].get<int32_t>();
     if (request.method() != "DELETE" or !body.count("userId")) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
+        ;
         return;
     }
     json_t result = model->deleteComments(id);
     if (result.empty()) {
-        response.out() << "Cant delete comments";
-        response.setStatus(500);
+        WriteResponse(response, 500);
         return;
     }
     response.out() << result.dump();
@@ -119,18 +120,18 @@ GetComments::GetComments(Model* _model)
 void GetComments::handleRequest(const Http::Request& request, Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     int32_t newsId = extractPositiveParam(request, "newsId");
     int32_t page = extractPositiveParam(request, "page");
     if (request.method() != "GET" or newsId < 0 or page < 0) {
-        response.setStatus(403);
+        WriteResponse(response, 403);
+        ;
         return;
     }
     json_t news = model->getComments(newsId, page);
     if (news.empty()) {
-        response.out() << "Cant find comments";
         response.setStatus(200);
         return;
     }
@@ -159,12 +160,12 @@ GetCommentsById::GetCommentsById(Model* _model)
 void GetCommentsById::handleRequest(const Http::Request& request, Http::Response& response)
 {
     if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
     auto ids = request.getParameterValues("id");
     if (request.method() != "GET") {
-        response.setStatus(403);
+        WriteResponse(response, 403);
         return;
     }
     std::vector<int32_t> idsInt;
@@ -173,7 +174,7 @@ void GetCommentsById::handleRequest(const Http::Request& request, Http::Response
     }
     json_t comments = model->getCommentsById(idsInt);
     if (comments.empty()) {
-        response.out() << "Cant find names comments";
+        WriteResponse(response, 500);
         return;
     }
     response.out() << comments.dump();

@@ -13,6 +13,10 @@ void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& 
         response.setStatus(200);
         return;
     }
+    if (request.method() != "POST") {
+        WriteResponse(response, 403);
+        return;
+    }
     const std::string body = getRequestBody(request);
     const Wt::Http::Message& msg = model->login(request.headers(), body);
     writeOutput(msg, response);
@@ -27,6 +31,10 @@ void Register::handleRequest(const Wt::Http::Request& request, Wt::Http::Respons
 {
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
+        return;
+    }
+    if (request.method() != "POST") {
+        WriteResponse(response, 403);
         return;
     }
     const std::string body = getRequestBody(request);
@@ -45,6 +53,10 @@ void DelUser::handleRequest(const Http::Request& request, Http::Response& respon
         response.setStatus(200);
         return;
     }
+    if (request.method() != "DELETE") {
+        WriteResponse(response, 403);
+        return;
+    }
     const std::string body = getRequestBody(request);
     const Wt::Http::Message msg = model->del(request.headers(), body);
     writeOutput(msg, response);
@@ -59,6 +71,10 @@ void GetAuthCode::handleRequest(const Http::Request& request, Http::Response& re
 {
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
+        return;
+    }
+    if (request.method() != "GET") {
+        WriteResponse(response, 403);
         return;
     }
     const Wt::Http::Message msg = model->getAuthCode(request.headers(), request.queryString());
@@ -76,6 +92,10 @@ void GetToken::handleRequest(const Http::Request& request, Http::Response& respo
         response.setStatus(200);
         return;
     }
+    if (request.method() != "GET") {
+        WriteResponse(response, 403);
+        return;
+    }
     const Wt::Http::Message msg = model->getToken(request.headers(), request.queryString());
     writeOutput(msg, response);
 }
@@ -89,6 +109,10 @@ void RefreshToken::handleRequest(const Http::Request& request, Http::Response& r
 {
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
+        return;
+    }
+    if (request.method() != "POST") {
+        WriteResponse(response, 403);
         return;
     }
     const std::string body = getRequestBody(request);

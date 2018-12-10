@@ -141,8 +141,8 @@ inline std::string getRequestBody(const Wt::Http::Request& request)
 {
     std::string body;
     while (std::getline(request.in(), body))
-        ;
-    return body;
+
+        return body;
 }
 inline std::string getAuthToken(const std::vector<Http::Message::Header>& headers)
 {
@@ -189,6 +189,63 @@ inline bool checkAuth(const Wt::Http::Request& request, const std::string& secre
     } catch (...) {
         return false;
     };
+}
+class ResponseAsssist {
+
+public:
+    std::string ParseError() const
+    {
+        json_t res;
+        res["error"] = "Wrong msg format";
+        return res.dump();
+    }
+    std::string InternalError() const
+    {
+        json_t res;
+        res["error"] = "Internal error";
+        return res.dump();
+    }
+    std::string AuthError() const
+    {
+        json_t res;
+        res["error"] = "Cant authorize";
+        return res.dump();
+    }
+    std::string UnknownError() const
+    {
+        json_t res;
+        res["error"] = "Unknown reason";
+        return res.dump();
+    }
+    static std::string TimeoutError()
+    {
+        json_t res;
+        res["error"] = "Timeout reason";
+        return res.dump();
+    }
+};
+inline void WriteResponse(Wt::Http::Response& response, int32_t code)
+{
+    static ResponseAsssist ra;
+    response.setStatus(code);
+    switch (code) {
+    case 400: {
+        response.out() << ra.AuthError();
+        break;
+    }
+    case 403: {
+        response.out() << ra.ParseError();
+        break;
+    }
+    case 500: {
+        response.out() << ra.InternalError();
+        break;
+    }
+    default: {
+        response.out() << ra.UnknownError();
+        break;
+    }
+    }
 }
 }
 

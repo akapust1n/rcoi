@@ -42,10 +42,12 @@ export default class Login extends Component {
                 'Content-Type': 'application/json',
             },
             body: data,
-        }).then(res => {
+        }).then(async (res) => {
             if (res.status === 200) {
                 return _parseJSON(res);
             } else {
+                const response = await _parseJSON(res);
+                alert(response["error"]);
                 throw new Error();
             }
         }).then(json => {
@@ -54,9 +56,7 @@ export default class Login extends Component {
                 title: "",
                 body: "",
             })
-        }).catch((error) => {
-            alert("Cant create news!");
-        })
+        }).catch((error) => { })
     }
 
     render() {

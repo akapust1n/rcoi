@@ -15,6 +15,10 @@ void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Respon
         response.setStatus(200);
         return;
     }
+    if (request.method() != "GET") {
+        WriteResponse(response, 403);
+        return;
+    }
     const Wt::Http::Message msg = model->getTitles(request.headers(), request.queryString());
     writeOutput(msg, response);
 }
@@ -28,6 +32,10 @@ void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Respo
 {
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
+        return;
+    }
+    if (request.method() != "POST") {
+        WriteResponse(response, 403);
         return;
     }
 
@@ -45,6 +53,10 @@ void OneNews::handleRequest(const Http::Request& request, Http::Response& respon
 {
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
+        return;
+    }
+    if (request.method() != "GET") {
+        WriteResponse(response, 403);
         return;
     }
     const Wt::Http::Message msg = model->getOneNews(request.headers(), request.queryString());

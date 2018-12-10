@@ -41,10 +41,12 @@ export default class Login extends Component {
                 'Content-Type': 'application/json',
             },
             body: data,
-        }).then(res => {
+        }).then(async res => {
             if (res.status === 200) {
                 return _parseJSON(res);
             } else {
+                const response = await _parseJSON(res);
+                alert(response["error"]);
                 throw new Error();
             }
         }).then(json => {
@@ -53,7 +55,6 @@ export default class Login extends Component {
             localStorage.setItem("authtoken", json["authtoken"]);
         })
             .catch((error) => {
-                alert("Cant login");
             })
     }
 

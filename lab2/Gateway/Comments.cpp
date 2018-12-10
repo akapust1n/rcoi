@@ -17,9 +17,13 @@ void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Re
         response.setStatus(200);
         return;
     }
+    if (request.method() != "POST") {
+        WriteResponse(response, 403);
+        return;
+    }
     uint32_t userId = 0;
     if (!model->checkAuth(request.headers(), userId)) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
 
@@ -40,9 +44,13 @@ void Like::handleRequest(const Http::Request& request, Http::Response& response)
         response.setStatus(200);
         return;
     }
+    if (request.method() != "POST") {
+        WriteResponse(response, 403);
+        return;
+    }
     uint32_t userId = 0;
     if (!model->checkAuth(request.headers(), userId)) {
-        response.setStatus(401);
+        WriteResponse(response, 400);
         return;
     }
 

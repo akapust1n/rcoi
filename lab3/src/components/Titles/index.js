@@ -28,7 +28,8 @@ export default class Titles extends Component {
                 console.log("news_", news);
                 this.setState({ news: news });
             } else {
-                alert("cant load news!");
+                const response = await _parseJSON(res);
+                alert(response["error"]);
             }
         }
         request();
