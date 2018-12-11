@@ -46,10 +46,11 @@ export default class Login extends Component {
             } else {
                 const response = await _parseJSON(res);
                 alert(response["error"]);
+                throw Error();
             }
         }).then(json => { alert("register is ok"); })
             .catch((error) => {
-                alert("register fails");
+                //  alert("register fails");
             })
     }
 

@@ -1,6 +1,7 @@
 #include "Model.h"
 
 #include <chrono>
+#include <functional>
 #include <map>
 #include <tuple>
 const std::chrono::seconds timeout(2);
@@ -10,7 +11,7 @@ using namespace ns;
 const std::string secretService = "gateway";
 using namespace jwt::params;
 
-const Wt::Http::Message Model::getfromService(Service service, const std::vector<Http::Message::Header>& headers, const std::string& params, const std::string& path)
+const Wt::Http::Message Model::getfromService(Services::Service service, const std::vector<Http::Message::Header>& headers, const std::string& params, const std::string& path)
 {
     Client client;
     client.setTimeout(timeout);
@@ -21,7 +22,7 @@ const Wt::Http::Message Model::getfromService(Service service, const std::vector
     return client.message();
 }
 
-const Http::Message Model::postToService(Model::Service service, const std::vector<Http::Message::Header>& headers, const std::string& body, const std::string& path)
+const Http::Message Model::postToService(Services::Service service, const std::vector<Http::Message::Header>& headers, const std::string& body, const std::string& path)
 {
     Client client;
     client.setTimeout(timeout);
@@ -35,7 +36,7 @@ const Http::Message Model::postToService(Model::Service service, const std::vect
     return client.message();
 }
 
-void Model::getAuthService(std::vector<Http::Message::Header>& headers, Service service)
+void Model::getAuthService(std::vector<Http::Message::Header>& headers, Services::Service service)
 {
     Client client;
     client.setTimeout(timeout);
@@ -71,7 +72,7 @@ void Model::getAuthService(std::vector<Http::Message::Header>& headers, Service 
     }
 }
 
-const Http::Message Model::deletefromService(Model::Service service, const std::vector<Http::Message::Header>& headers, const std::string& body, const std::string& path)
+const Http::Message Model::deletefromService(Services::Service service, const std::vector<Http::Message::Header>& headers, const std::string& body, const std::string& path)
 {
     Client client;
     client.setTimeout(timeout);
@@ -89,7 +90,7 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
 {
 
     Wt::Http::Message result;
-    const Wt::Http::Message msg = getfromService(News, headers, params, "titles");
+    const Wt::Http::Message msg = getfromService(Services::News, headers, params, "titles");
     if (msg.status() == 200) {
         json_t titles = json_t::parse(msg.body()); //trust that json is valid
         std::string newsIds;
@@ -105,7 +106,7 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
         if (newsIds.begin() != newsIds.end())
             newsIds.erase(newsIds.end() - 1); //remove last &
 
-        const Wt::Http::Message& msgComments = getfromService(Comments, headers, newsIds, "count");
+        const Wt::Http::Message& msgComments = getfromService(Services::Comments, headers, newsIds, "count");
         json_t titlesArray = json_t::array();
         if (msgComments.status() == 200) {
             json_t countComments = json_t::parse(msgComments.body()); //trust that json is valid
@@ -147,72 +148,82 @@ const Http::Message Model::getTitles(const std::vector<Http::Message::Header>& h
 
 const Http::Message Model::createComment(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    Wt::Http::Message result = postToService(Comments, headers, body, "comment");
+    Wt::Http::Message result = postToService(Services::Comments, headers, body, "comment");
     return result;
 }
 
 const Http::Message Model::createNews(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    Wt::Http::Message result = postToService(News, headers, body, "createNews");
+    Wt::Http::Message result = postToService(Services::News, headers, body, "createNews");
     return result;
 }
 
 const Http::Message Model::login(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    Wt::Http::Message result = postToService(Users, headers, body, "login");
+    Wt::Http::Message result = postToService(Services::Users, headers, body, "login");
     return result;
 }
 
 const Http::Message Model::reg(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    Wt::Http::Message result = postToService(Users, headers, body, "register");
+    Wt::Http::Message result = postToService(Services::Users, headers, body, "register");
     return result;
 }
 
 const Http::Message Model::del(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    Wt::Http::Message result = deletefromService(Users, headers, body, "delete");
-    Wt::Http::Message result2 = deletefromService(Comments, headers, body, "deleteByUser");
-    if (result.status() != 200 or result2.status() != 200)
-        result.setStatus(500);
-    return result;
+    Wt::Http::Message result;
+    WriteResponse(result, 200);
+    Wt::Http::Message deleteUsersResult = deletefromService(Services::Users, headers, body, "delete");
+    if (deleteUsersResult.status() != 200) {
+        auto delayedTask = std::bind(&Model::deletefromService, this, Services::Users, headers, body, "delete");
+        TaskQueue::Instance().addTask(delayedTask);
+    }
+    Wt::Http::Message deleteCommentsResult = deletefromService(Services::Comments, headers, body, "deleteByUser");
+    if (deleteCommentsResult.status() != 200) {
+        auto delayedTask = std::bind(&Model::deletefromService, this, Services::Comments, headers, body, "deleteByUser");
+        TaskQueue::Instance().addTask(delayedTask);
+    }
+
+    return deleteCommentsResult;
 }
 
 const Http::Message Model::getAuthCode(const std::vector<Http::Message::Header>& headers, const std::string& params)
 {
-    const Wt::Http::Message result = getfromService(Users, headers, params, "getAuthCode");
+    const Wt::Http::Message result = getfromService(Services::Users, headers, params, "getAuthCode");
     return result;
 }
 
 const Http::Message Model::getToken(const std::vector<Http::Message::Header>& headers, const std::string& params)
 {
-    const Wt::Http::Message result = getfromService(Users, headers, params, "getToken");
+    const Wt::Http::Message result = getfromService(Services::Users, headers, params, "getToken");
     return result;
 }
 
 const Http::Message Model::refreshToken(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    const Wt::Http::Message result = postToService(Users, headers, body, "refreshToken");
+    const Wt::Http::Message result = postToService(Services::Users, headers, body, "refreshToken");
     return result;
 }
 
 const Http::Message Model::like(const std::vector<Http::Message::Header>& headers, const std::string& body)
 {
-    Wt::Http::Message checkLike = postToService(LikeHistory, headers, body, "writeLike");
+    Wt::Http::Message checkLike = postToService(Services::LikeHistory, headers, body, "writeLike");
     json_t likeStatus = tryParsejson(checkLike.body());
     auto entityIt = likeStatus.find("entityId");
-
+    Wt::Http::Message result;
     if (checkLike.status() == 200 and entityIt != likeStatus.end() and entityIt.value().get<int32_t>() != -1) {
-
-        Wt::Http::Message result = postToService(Comments, headers, body, "like");
-        Wt::Http::Message result2 = postToService(Users, headers, body, "incRating");
-        if (result.status() != 200 or result2.status() != 200)
-            result.setStatus(500);
-        return result;
-    } else {
-        checkLike.setStatus(500);
-        return checkLike;
+        Wt::Http::Message commentsResult = postToService(Services::Comments, headers, body, "like");
+        if (commentsResult.status() != 200) {
+            auto rollbackLike = deletefromService(Services::LikeHistory, headers, body, "deleteLike");
+            WriteResponse(result, commentsResult.status());
+        } else {
+            result.setStatus(200);
+        }
     }
+    if (checkLike.status() != 200)
+        WriteResponse(result, checkLike.status());
+    return result;
 }
 
 const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& headers, const std::string& params)
@@ -221,7 +232,7 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
     Wt::Http::Message result;
     json_t resultjson;
     std::cout << "BEFORE getNews" << std::endl;
-    Wt::Http::Message getNews = getfromService(News, headers, params, "getnews"); //title, body, creationDate
+    Wt::Http::Message getNews = getfromService(Services::News, headers, params, "getnews"); //title, body, creationDate
     std::cout << "AFTER getNews" << getNews.status() << std::endl;
 
     if (getNews.status() == 200) {
@@ -230,7 +241,7 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
         resultjson["news"] = newsjson;
         json_t resultComments = json_t::array();
         std::cout << "BEFORE getCommnets" << std::endl;
-        Wt::Http::Message getComments = getfromService(Comments, headers, params, "getComments");
+        Wt::Http::Message getComments = getfromService(Services::Comments, headers, params, "getComments");
         std::cout << "AFTER getCommnets" << getComments.status() << std::endl;
 
         if (getComments.status() == 200) {
@@ -247,7 +258,7 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
             if (userIds.begin() != userIds.end())
                 userIds.erase(userIds.end() - 1); //remove last &
             std::cout << "BEFORE getUsernames" << std::endl;
-            Wt::Http::Message getUsernames = getfromService(Users, headers, userIds, "names");
+            Wt::Http::Message getUsernames = getfromService(Services::Users, headers, userIds, "names");
             std::cout << "AFTER getUsernames" << getUsernames.status() << std::endl;
             if (getUsernames.status() == 200 or userIds.empty()) {
                 json_t names = tryParsejson(getUsernames.body());
@@ -291,7 +302,7 @@ const Http::Message Model::getOneNews(const std::vector<Http::Message::Header>& 
 const Http::Message Model::history(const std::vector<Http::Message::Header>& headers, const std::string& params)
 {
     Wt::Http::Message result;
-    Wt::Http::Message getHistory = getfromService(LikeHistory, headers, params, "getLikes");
+    Wt::Http::Message getHistory = getfromService(Services::LikeHistory, headers, params, "getLikes");
     std::string userIds;
     std::string commentIds;
     if (getHistory.status() == 200) {
@@ -309,8 +320,8 @@ const Http::Message Model::history(const std::vector<Http::Message::Header>& hea
         if (commentIds.begin() != commentIds.end())
             commentIds.erase(commentIds.end() - 1); //remove last &
 
-        Wt::Http::Message getUsernames = getfromService(Users, headers, userIds, "names");
-        Wt::Http::Message getComments = getfromService(Comments, headers, commentIds, "commentsById");
+        Wt::Http::Message getUsernames = getfromService(Services::Users, headers, userIds, "names");
+        Wt::Http::Message getComments = getfromService(Services::Comments, headers, commentIds, "commentsById");
 
         if ((getUsernames.status() == 200 and getComments.status() == 200) or userIds.empty()) {
             json_t names = tryParsejson(getUsernames.body());
@@ -357,8 +368,9 @@ bool Model::checkAuth(const std::vector<Http::Message::Header>& headers, uint32_
 {
     const std::string token = HttpAssist::getAuthToken(headers);
     const std::string params = "token=" + token;
+    std::cout << "TOKEN " << token << std::endl;
 
-    Wt::Http::Message result = getfromService(Users, {}, params, "auth");
+    Wt::Http::Message result = getfromService(Services::Users, {}, params, "auth");
     const bool authorized = result.status() == 200;
     if (authorized) {
         json_t userIdJson = tryParsejson(result.body());

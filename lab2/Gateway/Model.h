@@ -2,6 +2,7 @@
 #define MODEL_H
 #include "../Shared/HttpAssist.h"
 #include "../Shared/JsonStructs.h"
+#include "TaskQueue.h"
 #include <Wt/Http/Client>
 #include <Wt/Http/Response>
 #include <array>
@@ -9,14 +10,6 @@
 #include <string>
 
 class Model {
-    enum Service {
-        News = 0,
-        Comments,
-        Users,
-        LikeHistory,
-
-        ServiceCount
-    };
 
 public:
     Model() = default;
@@ -39,16 +32,16 @@ public:
     const Wt::Http::Message clear(const std::vector<Wt::Http::Message::Header>& headers);
 #endif
 private:
-    const Wt::Http::Message deletefromService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);
-    const Wt::Http::Message getfromService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& params, const std::string& path);
-    const Http::Message postToService(Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);
-    void getAuthService(std::vector<Http::Message::Header>& headers, Service service);
+    const Wt::Http::Message deletefromService(Services::Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);
+    const Wt::Http::Message getfromService(Services::Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& params, const std::string& path);
+    const Http::Message postToService(Services::Service service, const std::vector<Wt::Http::Message::Header>& headers, const std::string& body, const std::string& path);
+    void getAuthService(std::vector<Http::Message::Header>& headers, Services::Service service);
 
 private:
-    std::array<std::string, ServiceCount> skServicePaths = { HttpAssist::skUrlNews, HttpAssist::skUrlComments, HttpAssist::skUrlUsers, HttpAssist::skUrlLikeHistory };
-    std::map<Service, std::string> serviceTokens;
-    std::map<Service, std::string> secretServiceStrings = { { News, "news" }, { Comments, "comments" },
-        { Users, "users" }, { LikeHistory, "likehistory" } };
+    std::array<std::string, Services::ServiceCount> skServicePaths = { HttpAssist::skUrlNews, HttpAssist::skUrlComments, HttpAssist::skUrlUsers, HttpAssist::skUrlLikeHistory };
+    std::map<Services::Service, std::string> serviceTokens;
+    std::map<Services::Service, std::string> secretServiceStrings = { { Services::News, "news" }, { Services::Comments, "comments" },
+        { Services::Users, "users" }, { Services::LikeHistory, "likehistory" } };
 };
 
 #endif // MODEL_H

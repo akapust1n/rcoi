@@ -13,18 +13,21 @@ public:
         : getLikes(&model)
         , writeLike(&model)
         , authService(&model, Model::getSecretKey())
+        , deleteLike(&model)
     {
     }
     void route(WServer& server)
     {
         server.addResource(&getLikes, "/getLikes");
         server.addResource(&writeLike, "/writeLike");
+        server.addResource(&deleteLike, "/deleteLike");
         server.addResource(&authService, "/authService");
     }
 
 private:
     GetLikes getLikes;
     WriteLike writeLike;
+    DeleteLike deleteLike;
     Model model;
     AuthService authService;
 };

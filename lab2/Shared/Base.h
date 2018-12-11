@@ -27,7 +27,9 @@ protected:
     void writeOutput(const Wt::Http::Message& msg, Wt::Http::Response& response)
     {
         HttpAssist::writeHeaders(response, msg.headers());
-        response.out() << (msg.body().empty() ? HttpAssist::ResponseAsssist::TimeoutError() : msg.body());
+        response.out() << (msg.body().empty() and (msg.status() > 299 or msg.status() < 200) // )))))
+                ? HttpAssist::ResponseAsssist::TimeoutError()
+                : msg.body());
         response.setStatus(msg.status() > 0 ? msg.status() : 500);
     }
 };

@@ -63,3 +63,29 @@ const json_t Model::writeLike(int32_t userId, int32_t commentId)
 
     return result;
 }
+
+const json_t Model::deleteLike(int32_t userId, int32_t commentId)
+{
+    if (!db)
+        db = Db::GetInst()->GetMysql();
+
+    json_t result;
+
+    auto req = db->prepareStatement("DELETE FROM  LikeHistory WHERE userId = ? AND commentId = ?");
+    req->bind(0, userId);
+    req->bind(1, commentId);
+    if (!req) {
+        LOG_ERROR("Cant prepare statement");
+    } else {
+        try {
+            LOG_INFO("Db request %s", req->sql().c_str());
+            req->execute();
+            result["entityId"] = req->affectedRowCount();
+        } catch (...) {
+            result["entityId"] = -1;
+            LOG_INFO("Cant delete like!");
+        }
+    };
+
+    return result;
+}

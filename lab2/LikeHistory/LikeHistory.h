@@ -20,5 +20,12 @@ public:
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 };
+class DeleteLike : public Base {
+public:
+    DeleteLike(Model* _model);
+
+protected:
+    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+};
 
 #endif // LIKEHISTORY_H

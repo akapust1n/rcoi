@@ -23,12 +23,13 @@ void GetLikes::handleRequest(const Http::Request& request, Http::Response& respo
         return;
     }
 
-    json_t newsResponse = model->getLikes(page);
-    if (newsResponse.empty()) {
+    json_t GetLikes = model->getLikes(page);
+    if (GetLikes.empty()) {
         WriteResponse(response, 500);
         return;
     }
-    response.out() << newsResponse.dump();
+    response.setStatus(200);
+    response.out() << GetLikes.dump();
 }
 
 WriteLike::WriteLike(Model* _model)
@@ -46,14 +47,39 @@ void WriteLike::handleRequest(const Http::Request& request, Http::Response& resp
     LikeEntity likeEntity;
     if (request.method() != "POST" or !from_json(likeEntityjson, likeEntity)) {
         WriteResponse(response, 403);
-        ;
         return;
     }
 
-    json_t newsResponse = model->writeLike(likeEntity.userId, likeEntity.commentId);
-    if (newsResponse.empty()) {
+    json_t likeWriteResult = model->writeLike(likeEntity.userId, likeEntity.commentId);
+    if (likeWriteResult["entityId"].get<int32_t>() == -1) {
+        WriteResponse(response, 208);
+        return;
+    }
+    response.out() << likeWriteResult.dump();
+}
+
+DeleteLike::DeleteLike(Model* _model)
+    : Base(_model)
+{
+}
+
+void DeleteLike::handleRequest(const Http::Request& request, Http::Response& response)
+{
+    if (!HttpAssist::checkAuth(request, model->getSecretKey())) {
+        WriteResponse(response, 400);
+        return;
+    }
+    json_t likeEntityjson = tryParsejson(getRequestBody(request));
+    LikeEntity likeEntity;
+    if (request.method() != "DELETE" or !from_json(likeEntityjson, likeEntity)) {
+        WriteResponse(response, 403);
+        return;
+    }
+
+    json_t likeDeleteResult = model->deleteLike(likeEntity.userId, likeEntity.commentId);
+    if (likeDeleteResult["entityId"].get<int32_t>() == -1) {
         WriteResponse(response, 500);
         return;
     }
-    response.out() << newsResponse.dump();
+    response.out() << likeDeleteResult.dump();
 }

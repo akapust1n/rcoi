@@ -82,6 +82,7 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
                             LOG_INFO("Db request %s", req->sql().c_str());
                             try {
                                 req->execute();
+                                std::cout << "AUTHTOKEN " << req->insertedId() << "__" << token << std::endl;
                                 if (req->insertedId() > 0) {
                                     result["authtoken"] = token;
                                 }
@@ -91,6 +92,9 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
                         }
                     }
                 }
+            } else {
+                result["error"] = "Cant authorize";
+                LOG_ERROR("CANT AUTH");
             }
 
         } catch (...) {
@@ -117,9 +121,12 @@ const json_t Model::del(int32_t userId)
             req->execute();
             if (req->affectedRowCount() > 0) {
                 result["result"] = "user is deleted!";
+                req = db->prepareStatement("DELETE FROM Tokens WHERE userId=? AND kind=0");
+                req->bind(0, userId);
+                req->execute();
             }
         } catch (...) {
-            LOG_INFO("wrong userId!");
+            LOG_INFO("smth wrong with delete!");
         }
     }
     return result;

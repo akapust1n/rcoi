@@ -247,6 +247,39 @@ inline void WriteResponse(Wt::Http::Response& response, int32_t code)
     }
     }
 }
+inline void WriteResponse(Wt::Http::Message& response, int32_t code)
+{
+    static ResponseAsssist ra;
+    response.setStatus(code);
+    switch (code) {
+    case -1: {
+        response.addBodyText(ra.TimeoutError());
+        break;
+    }
+    case 200: {
+        break;
+    }
+    case 208: {
+        break;
+    }
+    case 400: {
+        response.addBodyText(ra.AuthError());
+        break;
+    }
+    case 403: {
+        response.addBodyText(ra.ParseError());
+        break;
+    }
+    case 500: {
+        response.addBodyText(ra.InternalError());
+        break;
+    }
+    default: {
+        response.addBodyText(ra.UnknownError());
+        break;
+    }
+    }
+}
 }
 
 #endif // SHAREDHTTP_H

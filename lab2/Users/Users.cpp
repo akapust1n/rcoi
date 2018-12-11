@@ -23,7 +23,6 @@ void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& 
     UserAuth userAuth;
     if (request.method() != "POST" or !from_json(userAuthjson, userAuth)) {
         WriteResponse(response, 403);
-
         return;
     }
 
@@ -32,6 +31,7 @@ void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& 
         WriteResponse(response, 500);
         return;
     }
+    std::cout << "LOGIN RESP" << loginResponse.dump() << std::endl;
     response.out() << loginResponse.dump();
 }
 
