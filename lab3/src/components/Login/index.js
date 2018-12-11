@@ -43,7 +43,14 @@ export default class Login extends Component {
             body: data,
         }).then(async res => {
             if (res.status === 200) {
-                return _parseJSON(res);
+                const response = await _parseJSON(res);
+                if (response.hasOwnProperty("error")) {
+                    alert(response["error"]);
+                    throw new Error();
+                }
+                else {
+                    return response;
+                }
             } else {
                 const response = await _parseJSON(res);
                 alert(response["error"]);
@@ -51,8 +58,8 @@ export default class Login extends Component {
             }
         }).then(json => {
             console.log("login json", json);
-            alert("login is ok");
             localStorage.setItem("authtoken", json["authtoken"]);
+            alert("login is ok");
         })
             .catch((error) => {
             })

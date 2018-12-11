@@ -57,8 +57,15 @@ void DelUser::handleRequest(const Http::Request& request, Http::Response& respon
         WriteResponse(response, 403);
         return;
     }
-    const std::string body = getRequestBody(request);
-    const Wt::Http::Message msg = model->del(request.headers(), body);
+    uint32_t userId = 0;
+    if (!model->checkAuth(request.headers(), userId)) {
+        WriteResponse(response, 400);
+        return;
+    }
+
+    std::string body = getRequestBody(request);
+    HttpAssist::addUserId(body, userId);
+    const Wt::Http::Message msg = model->del({}, body);
     writeOutput(msg, response);
 }
 

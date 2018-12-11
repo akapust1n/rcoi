@@ -11,6 +11,12 @@ export default class LikedEntity extends Component {
 
     render() {
         const date = new Date(this.timestamp * 1000);
+        if (!this.user) {
+            this.user = "Deleted";
+        }
+        if (!this.comment) {
+            this.comment = "Deleted_comment";
+        }
 
         return (
             <div>

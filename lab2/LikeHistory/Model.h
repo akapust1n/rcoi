@@ -12,6 +12,7 @@ public:
     Model();
     const json_t getLikes(int32_t page);
     const json_t writeLike(int32_t userId, int32_t commentId);
+    const json_t deleteLike(int32_t userId, int32_t commentId);
     static std::string getSecretKey() { return "likehistory"; }
 
 private:

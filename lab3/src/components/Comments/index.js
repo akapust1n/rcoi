@@ -24,7 +24,8 @@ export default class Comment extends Component {
         const data = JSON.stringify({
             commentId: commentId,
         });
-        const authToken = localStorage.getItem("authtoken");
+        const authToken =
+            localStorage.getItem("authtoken");
 
         fetch(this.url, {
             method: 'POST',
@@ -34,18 +35,21 @@ export default class Comment extends Component {
                 'Authorization': 'Bearer ' + authToken
             },
             body: data,
-        }).then(res => {
+        }).then(async res => {
             if (res.status === 200) {
                 this.setState({ rating: this.state.rating + 1, isLiked: true });
                 return _parseJSON(res);
             } else {
                 this.setState({ isLiked: true });
-                throw new Error();
+                if (res.status !== 208) {
+                    const response = await _parseJSON(res);
+                    alert(response["error"]);
+                    throw Error();
+                }
             }
-        }).then(json => { /*alert("all is ok!");*/ })
-            .catch((error) => {
-                console.log("Cant like comment!");
-            })
+        }).catch((error) => {
+            console.log("Cant like comment!");
+        })
     }
     render() {
         let isLiked

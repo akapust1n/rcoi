@@ -33,6 +33,7 @@ export default class CommentFrom extends Component {
         });
         console.log(data);
         const authToken = localStorage.getItem("authtoken");
+        console.log("TOKEN__", authToken);
         fetch(this.url, {
             method: 'POST',
             mode: 'cors',

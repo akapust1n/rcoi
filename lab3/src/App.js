@@ -6,6 +6,7 @@ import CreateNews from "./components/CreateNews"
 import Titles from "./components/Titles"
 import ArticleFull from "./components/ArticleFull"
 import History from "./components/History"
+import Delete from "./components/Delete"
 
 
 const ROUTES = [
@@ -14,6 +15,8 @@ const ROUTES = [
   { name: "create news" },
   { name: "last news" },
   { name: "history" },
+  { name: "delete" },
+
 ]
 
 export const SecondRoutes = {
@@ -61,6 +64,9 @@ class App extends Component {
         mainPart = <History />
         break;
       case 5:
+        mainPart = <Delete />
+        break;
+      case 6:
         mainPart = <ArticleFull id={this.state.articleId} />
         break;
 
