@@ -3,8 +3,9 @@
     <newstestdb>lab2NewsTest</newstestdb>
     <usersreleasedb>lab2Users</usersreleasedb>
     <userstestdb>lab2UsersTest</userstestdb>
-    <commentsreleasedb>lab2Comments</commenstreleasedb>
+    <commentsreleasedb>lab2Comments</commentsreleasedb>
     <commentstestdb>lab2CommentsTest</commentstestdb>
     <likehistoryreleasedb>lab2LikeHistory</likehistoryreleasedb>
     <likehistorytestdb>lab2LikeHistory</likehistorytestdb>
+    <passwordMysql>1111</passwordMysql>
 </settings>

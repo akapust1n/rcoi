@@ -14,7 +14,7 @@ public:
 #ifdef DOCKER
         mysql.reset(new Dbo::backend::MySQL(scheme, "root", "1111", "database", 3306));
 #else
-        mysql.reset(new Dbo::backend::MySQL(scheme, "root", "1111"));
+        mysql.reset(new Dbo::backend::MySQL(scheme, "rcoi", "1111", "kapust1n.ru", 3306));
 #endif
 
         return true;

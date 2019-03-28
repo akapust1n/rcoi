@@ -40,6 +40,7 @@ private:
         commentsTestDb = tree.get<std::string>("settings.commentstestdb");
         likehistoryReleaseDb = tree.get<std::string>("settings.likehistoryreleasedb");
         likehistoryTestDb = tree.get<std::string>("settings.likehistorytestdb");
+        passwordMysql = tree.get<std::string>("settings.passwordMysql");
         if (newsReleaseDb.empty() or newsTestDb.empty() or usersReleaseDb.empty() or usersTestDb.empty()
             or commentsReleaseDb.empty() or commentsTestDb.empty() or likehistoryReleaseDb.empty()
             or likehistoryTestDb.empty())
@@ -56,6 +57,7 @@ private:
     std::string commentsTestDb;
     std::string likehistoryReleaseDb;
     std::string likehistoryTestDb;
+    std::string passwordMysql;
 
 public:
     std::string getNewsDb() const

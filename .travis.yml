@@ -5,20 +5,20 @@ services:
   - docker
 #build
 before_install:
- - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab2/.travis/travis.enc -out travis -d
+ - openssl aes-256-cbc -K $encrypted_c6dd56fcd733_key -iv $encrypted_c6dd56fcd733_iv -in ./lab2/.travis/travis.enc -out  ./lab2/.travis/travis -d
  - sudo curl -L "https://github.com/docker/compose/releases/download/1.22.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
  - sudo chmod +x /usr/local/bin/docker-compose
  - docker pull akapust1n/rcoi-base:latest
- - cd lab2/Dockerfiles
- - docker build . -f Dockerfile_gateway        -t akapust1n/lab6-gateway
- - docker build . -f Dockerfile_news           -t akapust1n/lab6-news
- - docker build . -f Dockerfile_comments       -t akapust1n/lab6-comments
- - docker build . -f Dockerfile_users          -t akapust1n/lab6-users
- - docker build . -f Dockerfile_likehistory    -t akapust1n/lab6-likehistory
+ - cd lab2/
+ - docker build . -f Dockerfile      -t akapust1n/courcework
+ - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+ - docker push akapust1n/courcework
+
+
 #deploy
 after_success:
   - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
-  - chmod +x deploy.sh
-  - bash deploy.sh
+  - chmod +x .travis/deploy.sh
+  - bash .travis/deploy.sh
 
 
