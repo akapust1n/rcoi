@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
 import { _parseJSON } from "../../HttpAssist"
+import Editor from "../Editor"
 import './style.css'
 
 export default class Login extends Component {
@@ -12,16 +13,18 @@ export default class Login extends Component {
             body: "",
         };
         this.url = "http://localhost:8080/createNews";
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeBody = this.handleChangeBody.bind(this);
+        this.handleChangeTitle = this.handleChangeTitle.bind(this);
+
     }
 
     validateForm() {
         return this.state.title.length > 0 && this.state.body.length > 0;
     }
 
-    handleChange(event) {
+    handleChangeTitle(event) {
         this.setState({
-            [event.target.id]: event.target.value
+            title: event.target.value
         });
     }
 
@@ -58,22 +61,14 @@ export default class Login extends Component {
             })
         }).catch((error) => { })
     }
+    handleChangeBody(value) {
+        this.setState({
+            body: value
+        });
+    }
 
-    render() {
-        return (
-            <Col md={6} sm={6} >
-                <div className="CreateNews">
-                    <form>
-                        <FormGroup controlId="title" >
-                            <ControlLabel>Title</ControlLabel>
-                            <FormControl
-                                autoFocus
-                                type="text"
-                                value={this.state.title}
-                                onChange={this.handleChange}
-                            />
-                        </FormGroup>
-                        <FormGroup controlId="body" >
+    /*
+      <FormGroup controlId="body" >
                             <ControlLabel>Body</ControlLabel>
                             <FormControl
                                 value={this.state.body}
@@ -83,6 +78,29 @@ export default class Login extends Component {
                                 rows="10"
                             />
                         </FormGroup>
+    */
+    render() {
+        return (
+            <Col md={6} sm={6} >
+
+                <div className="CreateNews">
+                    <form>
+                        <FormGroup controlId="title" >
+                            <ControlLabel>Title</ControlLabel>
+                            <FormControl
+                                autoFocus
+                                type="text"
+                                value={this.state.title}
+                                onChange={this.handleChangeTitle}
+                            />
+                        </FormGroup>
+                        <FormGroup controlId="title" >
+                            <ControlLabel>Body</ControlLabel>
+                            <Editor setValue={this.handleChangeBody} />
+                        </FormGroup>
+
+
+
                         <Button
                             block
                             bsSize="large"

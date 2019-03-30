@@ -3,6 +3,9 @@ import { _parseJSON, isEmpty } from "../../HttpAssist"
 import Comment from "../Comments"
 import CommentsForm from "../CommentForm"
 import { Pager } from "react-bootstrap"
+import * as Showdown from "showdown";
+import Parser from 'html-react-parser';
+
 import './style.css'
 
 
@@ -19,6 +22,12 @@ export default class ArticleFull extends Component {
         this.postComment = this.postComment.bind(this);
         this.nextPage = this.nextPage.bind(this);
         this.prevPage = this.prevPage.bind(this);
+        this.converter = new Showdown.Converter({
+            tables: true,
+            simplifiedAutoLink: true,
+            strikethrough: true,
+            tasklists: true
+        });
     }
 
     componentDidMount() {
@@ -108,6 +117,8 @@ export default class ArticleFull extends Component {
                     </Pager.Item>
                 </Pager>)
             }
+            const bodyHtml = this.converter.makeHtml(article.body);
+
             return (
                 <div>
                     <div className="card mx-auto">
@@ -115,7 +126,7 @@ export default class ArticleFull extends Component {
                             <h2> {article.title}</h2>
                         </div>
                         <div className="card-body">
-                            {article.body}
+                            {Parser(bodyHtml)}
                             <h6 className="card-subtitle text-muted">
                                 creation date: {date.toLocaleString()}
                             </h6>
