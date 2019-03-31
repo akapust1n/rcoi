@@ -2,7 +2,7 @@
 wt/4.0.4.1@akapust1n/stable
 fmt/5.2.0@bincrafters/stable
 jsonformoderncpp/3.2.0@vthiery/stable
-gtest/1.8.1@bincrafters/stable
+gtest/1.8.0@bincrafters/stable
 OpenSSL/1.0.2n@conan/stable
 
 [generators]

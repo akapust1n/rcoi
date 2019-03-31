@@ -9,6 +9,8 @@ Login::Login(Model* _model)
 
 void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
+    response.addHeader("Access-Control-Allow-Origin", "*");
+    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -29,6 +31,8 @@ Register::Register(Model* _model)
 
 void Register::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
+    response.addHeader("Access-Control-Allow-Origin", "*");
+    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -49,6 +53,8 @@ DelUser::DelUser(Model* _model)
 
 void DelUser::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    response.addHeader("Access-Control-Allow-Origin", "*");
+    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -76,6 +82,7 @@ GetAuthCode::GetAuthCode(Model* _model)
 
 void GetAuthCode::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -95,6 +102,7 @@ GetToken::GetToken(Model* _model)
 
 void GetToken::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -114,6 +122,7 @@ RefreshToken::RefreshToken(Model* _model)
 
 void RefreshToken::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;

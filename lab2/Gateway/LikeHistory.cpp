@@ -9,6 +9,7 @@ History::History(Model* _model)
 
 void History::handleRequest(const Http::Request& request, Http::Response& response)
 {
+    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
