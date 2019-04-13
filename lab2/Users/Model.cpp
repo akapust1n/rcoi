@@ -47,7 +47,7 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
     if (!db)
         db = Db::GetInst()->GetMysql();
     json_t result;
-    auto req = db->prepareStatement("SELECT ID FROM  Users WHERE name=? and password=?");
+    auto req = db->prepareStatement("SELECT ID, accessRights FROM  Users WHERE name=? and password=?");
     const std::string hash = std::to_string(std::hash<std::string>{}(pwd));
     if (!req) {
         LOG_ERROR("Cant prepare statement");
@@ -59,10 +59,12 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
             req->execute();
             if (req->nextRow()) {
                 int32_t ID;
+                long long accessRights;
                 req->getResult(0, &ID);
+                req->getResult(1, &accessRights);
                 //result["userId"] = ID;
                 if (ID > 0) {
-                    jwt::jwt_object obj{ algorithm("HS256"), payload({ { "userId", std::to_string(ID) } }), secret(key) };
+                    jwt::jwt_object obj{ algorithm("HS256"), payload({ { "userId", std::to_string(ID) }, { "accessRights", std::to_string(accessRights) } }), secret(key) };
                     obj.add_claim("rand", std::chrono::system_clock::now());
 
                     const std::string token = obj.signature();
@@ -96,7 +98,6 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
                 result["error"] = "Cant authorize";
                 LOG_ERROR("CANT AUTH");
             }
-
         } catch (...) {
             LOG_INFO("wrong login!");
         }

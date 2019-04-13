@@ -27,7 +27,7 @@ public:
     const Wt::Http::Message like(const std::vector<Wt::Http::Message::Header>& headers, const std::string& body);
     const Wt::Http::Message getOneNews(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
     const Wt::Http::Message history(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
-    bool checkAuth(const std::vector<Wt::Http::Message::Header>& headers, uint32_t& userId);
+    bool checkAuth(const std::vector<Wt::Http::Message::Header>& headers, uint32_t& userId, uint64_t accessMask);
 #ifdef IS_TEST_BUILD
     const Wt::Http::Message clear(const std::vector<Wt::Http::Message::Header>& headers);
 #endif

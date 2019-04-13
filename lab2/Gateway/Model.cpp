@@ -364,20 +364,22 @@ const Http::Message Model::history(const std::vector<Http::Message::Header>& hea
     return result;
 }
 
-bool Model::checkAuth(const std::vector<Http::Message::Header>& headers, uint32_t& userId)
+bool Model::checkAuth(const std::vector<Http::Message::Header>& headers, uint32_t& userId, uint64_t accessMask)
 {
     const std::string token = HttpAssist::getAuthToken(headers);
     const std::string params = "token=" + token;
     std::cout << "TOKEN " << token << std::endl;
 
     Wt::Http::Message result = getfromService(Services::Users, {}, params, "auth");
-    const bool authorized = result.status() == 200;
+    bool authorized = result.status() == 200;
     if (authorized) {
         json_t userIdJson = tryParsejson(result.body());
         auto userIdIt = userIdJson.find("userId");
         userId = userIdIt.value().get<uint32_t>();
+        auto accessRightsIt = userIdJson.find("accessRights");
+        authorized = accessRightsIt.value().get<uint64_t>() & accessMask;
     }
-    return result.status() == 200;
+    return authorized;
 }
 #ifdef IS_TEST_BUILD
 

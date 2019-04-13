@@ -62,5 +62,12 @@ protected:
     const std::string secretKey;
     const std::string gatewaySecret = "gateway";
 };
+enum Actions {
+    Actions_comment = 0,
+    Actions_like,
+    Actions_createNews,
+    Actions_delUser,
+    Actions_Count
+};
 
-#endif // BaseL_H
+#endif // Base_H

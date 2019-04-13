@@ -12,7 +12,7 @@ export default class Login extends Component {
             title: "",
             body: "",
         };
-        this.url = "http://kapust1n.ru:8080/createNews";
+        this.url = "https://kapust1n.ru:8079/createNews";
         this.handleChangeBody = this.handleChangeBody.bind(this);
         this.handleChangeTitle = this.handleChangeTitle.bind(this);
 

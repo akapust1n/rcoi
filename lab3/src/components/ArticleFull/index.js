@@ -18,7 +18,7 @@ export default class ArticleFull extends Component {
         }
         this.page = 1;
         this.noComments = false;
-        this.url = `http://kapust1n.ru:8080/oneNews?newsId=${props.id}&page=`;
+        this.url = `https://kapust1n.ru:8079/oneNews?newsId=${props.id}&page=`;
         this.postComment = this.postComment.bind(this);
         this.nextPage = this.nextPage.bind(this);
         this.prevPage = this.prevPage.bind(this);

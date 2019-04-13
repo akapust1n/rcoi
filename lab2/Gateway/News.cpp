@@ -41,7 +41,11 @@ void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Respo
         WriteResponse(response, 403);
         return;
     }
-
+    uint32_t userId = 0;
+    if (!model->checkAuth(request.headers(), userId, Actions_createNews)) {
+        WriteResponse(response, 400);
+        return;
+    }
     const std::string body = getRequestBody(request);
     const Wt::Http::Message& msg = model->createNews(request.headers(), body);
     writeOutput(msg, response);

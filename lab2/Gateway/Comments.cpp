@@ -24,7 +24,7 @@ void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Re
         return;
     }
     uint32_t userId = 0;
-    if (!model->checkAuth(request.headers(), userId)) {
+    if (!model->checkAuth(request.headers(), userId, Actions_comment)) {
         WriteResponse(response, 400);
         return;
     }
@@ -53,7 +53,7 @@ void Like::handleRequest(const Http::Request& request, Http::Response& response)
         return;
     }
     uint32_t userId = 0;
-    if (!model->checkAuth(request.headers(), userId)) {
+    if (!model->checkAuth(request.headers(), userId, Actions_like)) {
         WriteResponse(response, 400);
         return;
     }

@@ -15,7 +15,7 @@ export default class Comment extends Component {
         };
         console.log(this.props.comment);
         this.incRating = this.incRating.bind(this);
-        this.url = "http://kapust1n.ru:8080/like";
+        this.url = "https://kapust1n.ru:8079/like";
 
     }
 

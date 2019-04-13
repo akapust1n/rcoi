@@ -12,7 +12,7 @@ export default class Login extends Component {
             login: "",
             password: ""
         };
-        this.url = "http://kapust1n.ru:8080/login";
+        this.url = "https://kapust1n.ru:8079/login";
     }
 
     validateForm() {

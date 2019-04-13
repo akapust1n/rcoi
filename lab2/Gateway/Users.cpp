@@ -64,7 +64,7 @@ void DelUser::handleRequest(const Http::Request& request, Http::Response& respon
         return;
     }
     uint32_t userId = 0;
-    if (!model->checkAuth(request.headers(), userId)) {
+    if (!model->checkAuth(request.headers(), userId, Actions_delUser)) {
         WriteResponse(response, 400);
         return;
     }

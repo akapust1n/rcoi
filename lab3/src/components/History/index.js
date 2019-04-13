@@ -12,7 +12,7 @@ export default class History extends Component {
             page: 1
         };
         this.page = 1;
-        this.url = "http://kapust1n.ru:8080/history?page=";
+        this.url = "https://kapust1n.ru:8079/history?page=";
         this.nextPage = this.nextPage.bind(this);
         this.prevPage = this.prevPage.bind(this);
     }
