@@ -12,7 +12,7 @@ export default class Titles extends Component {
             page: 1
         };
         this.page = 1;
-        this.url = "http://localhost:8080/titles?page=";
+        this.url = "http://kapust1n.ru:8080/titles?page=";
         this.nextPage = this.nextPage.bind(this);
         this.prevPage = this.prevPage.bind(this);
     }

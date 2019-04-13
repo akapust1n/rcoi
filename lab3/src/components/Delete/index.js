@@ -6,7 +6,7 @@ import { _parseJSON } from "../../HttpAssist"
 export default class Delete extends Component {
     constructor(props) {
         super(props);
-        this.url = "http://localhost:8080/delete";
+        this.url = "http://kapust1n.ru:8080/delete";
     }
 
 

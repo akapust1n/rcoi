@@ -11,7 +11,7 @@ export default class Login extends Component {
             login: "",
             password: ""
         };
-        this.url = "http://localhost:8080/register";
+        this.url = "http://kapust1n.ru:8080/register";
     }
 
     validateForm() {

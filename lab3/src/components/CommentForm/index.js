@@ -11,7 +11,7 @@ export default class CommentFrom extends Component {
         this.state = {
             body: ""
         };
-        this.url = "http://localhost:8080/comment";
+        this.url = "http://kapust1n.ru:8080/comment";
     }
 
     validateForm() {
