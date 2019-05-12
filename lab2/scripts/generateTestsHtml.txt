@@ -1,0 +1,9 @@
+#build
+rm CMakeCache.txt && cmake CMakeLists.txt && make && bash run.sh 
+rm CMakeCache.txt && cmake CMakeLists.txt -DIS_TEST_BUILD=1 && make && bash run_tests.sh 
+
+#tests
+cd ~/dev/rcoi/lab2/CMakeFiles/tests.dir/Gateway
+lcov --capture --directory . --output-file coverage.info
+genhtml coverage.info --output-directory .
+

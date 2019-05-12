@@ -31,18 +31,18 @@ public:
     }
     void route(WServer& server)
     {
-        server.addResource(&titles, "/titles");
-        server.addResource(&createComment, "/comment");
-        server.addResource(&like, "/like");
-        server.addResource(&login, "/login");
-        server.addResource(&delUser, "/delete");
-        server.addResource(&createNews, "/createNews");
-        server.addResource(&reg, "/register");
-        server.addResource(&oneNews, "/oneNews");
-        server.addResource(&history, "/history");
-        server.addResource(&getAuthCode, "/getAuthCode");
-        server.addResource(&getToken, "/getToken");
-        server.addResource(&refreshToken, "/refreshToken");
+        server.addResource(&titles, "/api/titles");
+        server.addResource(&createComment, "/api/comment");
+        server.addResource(&like, "/api/like");
+        server.addResource(&login, "/api/login");
+        server.addResource(&delUser, "/api/delete");
+        server.addResource(&createNews, "/api/createNews");
+        server.addResource(&reg, "/api/register");
+        server.addResource(&oneNews, "/api/oneNews");
+        server.addResource(&history, "/api/history");
+        server.addResource(&getAuthCode, "/api/getAuthCode");
+        server.addResource(&getToken, "/api/getToken");
+        server.addResource(&refreshToken, "/api/refreshToken");
 #ifdef IS_TEST_BUILD
         server.addResource(&clear, "/clear");
 #endif
