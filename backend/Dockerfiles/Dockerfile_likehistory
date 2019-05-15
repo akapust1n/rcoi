@@ -1,0 +1,3 @@
+FROM akapust1n/courcework
+RUN chmod +x /rcoi/backend/scripts/likehistoryRun.sh
+CMD /rcoi/backend/scripts/likehistoryRun.sh

@@ -44,4 +44,4 @@ crow/*
 # Windows shortcuts
 *.lnk
 
-lab2/compile_commands.json
+backend/compile_commands.json

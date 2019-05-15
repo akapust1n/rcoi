@@ -1,0 +1,5 @@
+FROM akapust1n/courcework
+RUN chmod +x /rcoi/backend/scripts/gatewayRun.sh
+CMD /rcoi/backend/scripts/gatewayRun.sh
+
+

@@ -1,0 +1,3 @@
+FROM akapust1n/courcework
+RUN chmod +x /rcoi/backend/scripts/commentsRun.sh
+CMD /rcoi/backend/scripts/commentsRun.sh

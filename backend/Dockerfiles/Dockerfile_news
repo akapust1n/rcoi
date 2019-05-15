@@ -1,0 +1,7 @@
+FROM akapust1n/courcework
+RUN chmod +x /rcoi/backend/scripts/newsRun.sh
+CMD /rcoi/backend/scripts/newsRun.sh
+
+
+
+

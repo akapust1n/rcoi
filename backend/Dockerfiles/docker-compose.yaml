@@ -1,0 +1,23 @@
+version: '3.1'
+services:
+    gateway:
+       image: akapust1n/courcework-gateway
+       ports:
+          - "8080:8080"
+
+    news:
+        image: akapust1n/courcework-news
+
+    comments:
+        image: akapust1n/courcework-comments
+
+    users:
+        image: akapust1n/courcework-users
+    
+    likehistory:
+        image: akapust1n/courcework-likehistory
+ 
+
+
+
+

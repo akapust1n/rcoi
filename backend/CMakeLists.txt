@@ -19,6 +19,11 @@ if(IS_TEST_BUILD)
     add_definitions(-DIS_TEST_BUILD)
 endif()
 
+if(DOCKERCOMPOSE)
+    message("DOCKERCOMPOSE enabled")
+    add_definitions(-DDOCKERCOMPOSE)
+endif()
+
 if(DOCKER)
     message("DOCKER BUILD")
     add_definitions(-DDOCKER)

@@ -23,10 +23,17 @@ using json_t = nlohmann::json;
 
 using namespace Wt;
 namespace HttpAssist {
+#ifdef DOCKERCOMPOSE
+const static std::string skUrlNews = "http://news:8081";
+const static std::string skUrlComments = "http://comments:8082";
+const static std::string skUrlUsers = "http://users:8083";
+const static std::string skUrlLikeHistory = "http://likehistory:8084";
+#else
 const static std::string skUrlNews = "http://localhost:8081";
 const static std::string skUrlComments = "http://localhost:8082";
 const static std::string skUrlUsers = "http://localhost:8083";
 const static std::string skUrlLikeHistory = "http://localhost:8084";
+#endif
 
 class Client : public Http::Client {
 public:

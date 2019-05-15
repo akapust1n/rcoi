@@ -1,0 +1,3 @@
+FROM akapust1n/courcework
+RUN chmod +x /rcoi/backend/scripts/usersRun.sh
+CMD /rcoi/backend/scripts/usersRun.sh
