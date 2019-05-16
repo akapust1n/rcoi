@@ -13,8 +13,6 @@ CreateComment::CreateComment(Model* _model)
 
 void CreateComment::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -42,8 +40,6 @@ Like::Like(Model* _model)
 
 void Like::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;

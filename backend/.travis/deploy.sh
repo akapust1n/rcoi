@@ -7,7 +7,5 @@ ssh -o "StrictHostKeyChecking no" apps@$IP  <<EOF
   cd /home/apps/rcoi && git add . && git reset --hard HEAD~1 && git pull
   cd front
   npm install . && npm run build
-  docker ps -a -q --filter ancestor=akapust1n/courcework | xargs -r docker rm -f
-  docker rmi $(docker images |grep  'akapust1n/courcework') --force
-  docker run -d -p 8080:8080 akapust1n/courcework
+  cd ../Dockerfiles && docker stack deploy --compose-file=docker-compose.yaml courcework-swarm
 EOF

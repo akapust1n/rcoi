@@ -11,7 +11,6 @@ GetTitles::GetTitles(Model* _model)
 
 void GetTitles::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -31,8 +30,6 @@ CreateNews::CreateNews(Model* _model)
 
 void CreateNews::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -58,7 +55,6 @@ OneNews::OneNews(Model* _model)
 
 void OneNews::handleRequest(const Http::Request& request, Http::Response& response)
 {
-    response.addHeader("Access-Control-Allow-Origin", "*");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;

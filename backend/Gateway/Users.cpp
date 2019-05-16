@@ -9,8 +9,6 @@ Login::Login(Model* _model)
 
 void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    response.addHeader("Access-Control-Allow-Origin", "*");
-    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;
@@ -31,8 +29,6 @@ Register::Register(Model* _model)
 
 void Register::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
-    response.addHeader("Access-Control-Allow-Origin", "*");
-    response.addHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     if (request.method() == "OPTIONS") { //will be delete after debug
         response.setStatus(200);
         return;

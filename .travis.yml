@@ -20,7 +20,7 @@ before_install:
 #deploy
 after_success:
   - echo -e "Host *\n\tStrictHostKeyChecking no\nUserKnownHostsFile=/dev/null\n" >> ~/.ssh/config
-  - chmod +x .travis/deploy.sh
+  - cd .. && chmod +x .travis/deploy.sh
   - bash .travis/deploy.sh
 
 
