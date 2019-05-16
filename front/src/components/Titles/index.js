@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Article from '../Article'
 import { _parseJSON, isEmpty } from "../../HttpAssist"
 import { Pager } from "react-bootstrap"
+import { url } from '../../App'
 
 export default class Titles extends Component {
     constructor(props) {
@@ -12,7 +13,8 @@ export default class Titles extends Component {
             page: 1
         };
         this.page = 1;
-        this.url = "https://kapust1n.ru/api/titles?page=";
+        this.url = `${url}/api/titles?page=`;
+        console.log("url", this.url)
         this.nextPage = this.nextPage.bind(this);
         this.prevPage = this.prevPage.bind(this);
     }

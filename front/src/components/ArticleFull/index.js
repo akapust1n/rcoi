@@ -5,6 +5,7 @@ import CommentsForm from "../CommentForm"
 import { Pager } from "react-bootstrap"
 import * as Showdown from "showdown";
 import Parser from 'html-react-parser';
+import { url } from '../../App'
 
 import './style.css'
 
@@ -18,7 +19,7 @@ export default class ArticleFull extends Component {
         }
         this.page = 1;
         this.noComments = false;
-        this.url = `https://kapust1n.ru/api/oneNews?newsId=${props.id}&page=`;
+        this.url = `${url}/api/oneNews?newsId=${props.id}&page=`;
         this.postComment = this.postComment.bind(this);
         this.nextPage = this.nextPage.bind(this);
         this.prevPage = this.prevPage.bind(this);

@@ -62,7 +62,7 @@ protected:
     const std::string secretKey;
     const std::string gatewaySecret = "gateway";
 };
-enum Actions {
+enum Actions { //DO NOT REORDER
     Actions_comment = 0,
     Actions_like,
     Actions_createNews,

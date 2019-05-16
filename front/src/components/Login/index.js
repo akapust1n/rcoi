@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
 import { _parseJSON } from "../../HttpAssist"
 import './style.css'
+import { url } from '../../App'
 
 
 export default class Login extends Component {
@@ -12,7 +13,7 @@ export default class Login extends Component {
             login: "",
             password: ""
         };
-        this.url = "https://kapust1n.ru/api/login";
+        this.url = `${url}/api/login`;
     }
 
     validateForm() {
@@ -59,6 +60,7 @@ export default class Login extends Component {
         }).then(json => {
             console.log("login json", json);
             localStorage.setItem("authtoken", json["authtoken"]);
+            localStorage.setItem("accessrights", json["accessrights"]);
             alert("login is ok");
         })
             .catch((error) => {

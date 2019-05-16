@@ -87,6 +87,7 @@ const json_t Model::login(const std::string& name, const std::string& pwd)
                                 std::cout << "AUTHTOKEN " << req->insertedId() << "__" << token << std::endl;
                                 if (req->insertedId() > 0) {
                                     result["authtoken"] = token;
+                                    result["accessrights"] = accessRights;
                                 }
                             } catch (...) {
                                 LOG_INFO("can create token!");

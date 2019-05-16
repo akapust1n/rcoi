@@ -3,6 +3,7 @@ import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstr
 import { _parseJSON } from "../../HttpAssist"
 import Editor from "../Editor"
 import './style.css'
+import { url } from '../../App'
 
 export default class Login extends Component {
     constructor(props) {
@@ -12,7 +13,7 @@ export default class Login extends Component {
             title: "",
             body: "",
         };
-        this.url = "https://kapust1n.ru/api/createNews";
+        this.url = `${url}/api/createNews`;
         this.handleChangeBody = this.handleChangeBody.bind(this);
         this.handleChangeTitle = this.handleChangeTitle.bind(this);
 

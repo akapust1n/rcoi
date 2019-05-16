@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
 import { _parseJSON } from "../../HttpAssist"
+import { url } from '../../App'
 
 
 export default class Delete extends Component {
     constructor(props) {
         super(props);
-        this.url = "https://kapust1n.ru/api/delete";
+        this.url = `${url}/api/delete`;
     }
 
 

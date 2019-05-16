@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
 import _parseJSON from "../../HttpAssist"
+import { url } from '../../App'
+
 
 export default class CommentFrom extends Component {
     constructor(props) {
@@ -11,7 +13,7 @@ export default class CommentFrom extends Component {
         this.state = {
             body: ""
         };
-        this.url = "https://kapust1n.ru/api/comment";
+        this.url = `${url}/api/comment`;
     }
 
     validateForm() {

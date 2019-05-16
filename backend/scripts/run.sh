@@ -1,5 +1,4 @@
 #!/bin/bash
-cd /rcoi/backend
 pkill -f bin/gateway
 pkill -f bin/news
 pkill -f bin/comments

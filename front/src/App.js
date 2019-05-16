@@ -8,20 +8,26 @@ import ArticleFull from "./components/ArticleFull"
 import History from "./components/History"
 import Delete from "./components/Delete"
 
+const Actions_comment = 0;
+const Actions_like = 1;
+const Actions_createNews = 2;
+const Actions_delUser = 3;
 
 const ROUTES = [
-  { name: "login" },
-  { name: "register" },
-  { name: "create news" },
-  { name: "last news" },
-  { name: "history" },
-  { name: "delete" },
+  { index: 0, name: "login" },
+  { index: 1, name: "register" },
+  { index: 2, name: "create news" },
+  { index: 3, name: "last news" },
+  { index: 4, name: "history" },
+  { index: 5, name: "delete" },
 
 ]
 
 export const SecondRoutes = {
   fullArticle: ROUTES.length
 };
+//export const url = "https://kapust1n.ru"
+export const url = "http://localhost:8080"
 
 
 class App extends Component {
@@ -47,6 +53,20 @@ class App extends Component {
     console.log('render', this.state.route);
     const route = this.state.route;
     let mainPart;
+    const accessRights = localStorage.getItem("accessrights") === null ? 0 : localStorage.getItem("accessrights");
+    let localRoutes = ROUTES;
+    if (!(accessRights & (1 << Actions_createNews))) {
+      const removeIndex = localRoutes.findIndex(elem => elem.name === 'create news')
+      if (removeIndex != -1)
+        localRoutes.splice(removeIndex, 1)
+      console.log(localRoutes)
+    }
+
+    if (!(accessRights & (1 << Actions_delUser))) {
+      const removeIndex = localRoutes.findIndex(elem => elem.name === 'delete');
+      if (removeIndex != -1)
+        localRoutes.splice(removeIndex, 1)
+    }
     switch (route) {
       case 0:
         mainPart = <Login />
@@ -96,9 +116,10 @@ class App extends Component {
               }}
             >
 
-              {ROUTES.map((rout, index) => (
-                <NavItem key={index} eventKey={index}>{rout.name}</NavItem>
-              ))}
+              {
+                localRoutes.map((rout, index) => (
+                  <NavItem key={rout.index} eventKey={rout.index}>{rout.name}</NavItem>
+                ))}
             </Nav>
           </Col>
           <Col md={8} sm={8}>

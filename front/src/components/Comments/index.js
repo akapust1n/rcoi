@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { _parseJSON } from "../../HttpAssist"
 import { Panel, Badge, Glyphicon } from "react-bootstrap"
+import { url } from '../../App'
 
 export default class Comment extends Component {
     constructor(props) {
@@ -15,7 +16,7 @@ export default class Comment extends Component {
         };
         console.log(this.props.comment);
         this.incRating = this.incRating.bind(this);
-        this.url = "https://kapust1n.ru/api/like";
+        this.url = `${url}/api/like`;
 
     }
 

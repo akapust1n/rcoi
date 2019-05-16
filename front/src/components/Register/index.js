@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstrap";
 import { _parseJSON } from "../../HttpAssist"
 import './style.css'
+import { url } from '../../App'
 
 export default class Login extends Component {
     constructor(props) {
@@ -11,7 +12,7 @@ export default class Login extends Component {
             login: "",
             password: ""
         };
-        this.url = "https://kapust1n.ru/api/register";
+        this.url = `${url}/api/register`;
     }
 
     validateForm() {
