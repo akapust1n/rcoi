@@ -374,12 +374,45 @@ bool Model::checkAuth(const std::vector<Http::Message::Header>& headers, uint32_
     bool authorized = result.status() == 200;
     if (authorized) {
         json_t userIdJson = tryParsejson(result.body());
+        std::cout << userIdJson.dump();
         auto userIdIt = userIdJson.find("userId");
         userId = userIdIt.value().get<uint32_t>();
         auto accessRightsIt = userIdJson.find("accessRights");
-        authorized = accessRightsIt.value().get<uint64_t>() & accessMask;
+        authorized = accessRightsIt.value().get<uint64_t>() & (1 << accessMask);
     }
     return authorized;
+}
+
+bool Model::sendMetric(const std::string& key, const std::string& value)
+{
+    Client client;
+    client.setTimeout(timeout);
+    if (metricServerToken.empty()) {
+        Http::Message msg;
+        msg.addHeader("Content-Type", " application/json");
+        json_t auth = R"({ "jsonrpc": "2.0" ,
+                       "method": "user.login" ,
+                       "params":
+                      { "user": "Admin" ,
+                       "password": "zabbix" } ,
+                      "id": 1 ,
+                       "auth": null
+                      })"_json; // )))))))
+        msg.addBodyText(auth.dump());
+        client.post(skMetricServer, msg);
+        client.waitDone();
+        const std::string response = client.message().body();
+        const json_t authjson = tryParsejson(response);
+        auto authIt = authjson.find("result");
+        if (authIt != authjson.cend()) {
+            metricServerToken = authIt.value().get<std::string>();
+            std::cout << "token " << metricServerToken << std::endl;
+        } else {
+            LOG_ERROR("%s", "cant auth to metric server");
+            std::cout << msg.body() << std::endl;
+        }
+    }
+    return true;
 }
 #ifdef IS_TEST_BUILD
 

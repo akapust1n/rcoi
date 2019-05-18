@@ -176,8 +176,10 @@ void CheckAuth::handleRequest(const Http::Request& request, Http::Response& resp
     try {
         auto dec_obj = jwt::decode(*token, algorithms({ "hs256" }), secret(key));
         uint32_t userId = static_cast<uint32_t>(std::stoi(dec_obj.payload().get_claim_value<std::string>("userId")));
+        uint32_t accessRights = static_cast<uint32_t>(std::stoi(dec_obj.payload().get_claim_value<std::string>("accessRights")));
         json_t result;
         result["userId"] = userId;
+        result["accessRights"] = accessRights;
         response.setStatus(model->checkAuth(userId, *token));
         response.out() << result;
     } catch (...) {

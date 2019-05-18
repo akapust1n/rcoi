@@ -38,12 +38,15 @@ export default class Login extends Component {
             title: title,
             body: body,
         });
+        const authToken =
+            localStorage.getItem("authtoken");
 
         fetch(this.url, {
             method: 'POST',
             mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + authToken
             },
             body: data,
         }).then(async (res) => {

@@ -26,8 +26,8 @@ const ROUTES = [
 export const SecondRoutes = {
   fullArticle: ROUTES.length
 };
-//export const url = "https://kapust1n.ru"
-export const url = "http://localhost:8080"
+export const url = "https://kapust1n.ru"
+//export const url = "http://localhost:8080"
 
 
 class App extends Component {
@@ -54,6 +54,7 @@ class App extends Component {
     const route = this.state.route;
     let mainPart;
     const accessRights = localStorage.getItem("accessrights") === null ? 0 : localStorage.getItem("accessrights");
+    console.log("RIGHTS", accessRights)
     let localRoutes = ROUTES;
     if (!(accessRights & (1 << Actions_createNews))) {
       const removeIndex = localRoutes.findIndex(elem => elem.name === 'create news')

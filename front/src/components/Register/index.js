@@ -3,6 +3,7 @@ import { Button, FormGroup, FormControl, ControlLabel, Col } from "react-bootstr
 import { _parseJSON } from "../../HttpAssist"
 import './style.css'
 import { url } from '../../App'
+import VK, { Auth } from "react-vk";
 
 export default class Login extends Component {
     constructor(props) {
@@ -14,7 +15,6 @@ export default class Login extends Component {
         };
         this.url = `${url}/api/register`;
     }
-
     validateForm() {
         return this.state.login.length > 0 && this.state.password.length > 0;
     }
@@ -24,15 +24,24 @@ export default class Login extends Component {
             [event.target.id]: event.target.value
         });
     }
+    vkAuth = (params) => {
+        let name = params["first_name"] + params["last_name"]
+        console.log(name)
+        this.setState({ password: params["uid"].toString(), login: name }, this.handleSubmit)
+    }
 
     handleSubmit = event => {
-        event.preventDefault();
+        if (event != undefined) {
+            event.preventDefault();
+        }
         const login = this.state.login;
+        console.log(login)
         const password = this.state.password;
         const data = JSON.stringify({
             name: login,
             password: password,
         });
+        console.log(data)
 
         fetch(this.url, {
             method: 'POST',
@@ -85,6 +94,9 @@ export default class Login extends Component {
                         >
                             Register
             </Button>
+                        <VK apiId={6988609} >
+                            <Auth options={{ "onAuth": this.vkAuth }} />
+                        </VK>
                     </form>
                 </div>
             </Col>

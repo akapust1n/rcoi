@@ -28,6 +28,7 @@ public:
     const Wt::Http::Message getOneNews(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
     const Wt::Http::Message history(const std::vector<Wt::Http::Message::Header>& headers, const std::string& params);
     bool checkAuth(const std::vector<Wt::Http::Message::Header>& headers, uint32_t& userId, uint64_t accessMask);
+    bool sendMetric(const std::string& key, const std::string& value);
 #ifdef IS_TEST_BUILD
     const Wt::Http::Message clear(const std::vector<Wt::Http::Message::Header>& headers);
 #endif
@@ -42,6 +43,7 @@ private:
     std::map<Services::Service, std::string> serviceTokens;
     std::map<Services::Service, std::string> secretServiceStrings = { { Services::News, "news" }, { Services::Comments, "comments" },
         { Services::Users, "users" }, { Services::LikeHistory, "likehistory" } };
+    std::string metricServerToken;
 };
 
 #endif // MODEL_H

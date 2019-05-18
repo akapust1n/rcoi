@@ -34,6 +34,7 @@ const static std::string skUrlComments = "http://localhost:8082";
 const static std::string skUrlUsers = "http://localhost:8083";
 const static std::string skUrlLikeHistory = "http://localhost:8084";
 #endif
+const static std::string skMetricServer = "http://kapust1n.ru:10300/api_jsonrpc.php";
 
 class Client : public Http::Client {
 public:

@@ -13,6 +13,7 @@ void Login::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& 
         response.setStatus(200);
         return;
     }
+    model->sendMetric("login", "1");
     if (request.method() != "POST") {
         WriteResponse(response, 403);
         return;

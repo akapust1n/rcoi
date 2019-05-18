@@ -37,7 +37,9 @@ class AuthService : public Base {
 public:
     AuthService(Model* _model, std::string _secretKey)
         : Base(_model)
-        , secretKey(_secretKey){};
+        , secretKey(_secretKey)
+    {
+    }
 
 protected:
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
