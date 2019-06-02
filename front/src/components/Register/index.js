@@ -4,6 +4,9 @@ import { _parseJSON } from "../../HttpAssist"
 import './style.css'
 import { url } from '../../App'
 import VK, { Auth } from "react-vk";
+import translitRusEng from 'translit-rus-eng';
+
+
 
 export default class Login extends Component {
     constructor(props) {
@@ -25,7 +28,7 @@ export default class Login extends Component {
         });
     }
     vkAuth = (params) => {
-        let name = params["first_name"] + params["last_name"]
+        let name = translitRusEng(params["first_name"] + params["last_name"])
         console.log(name)
         this.setState({ password: params["uid"].toString(), login: name }, this.handleSubmit)
     }
