@@ -42,10 +42,17 @@ class App extends Component {
   handleClick(param1, param2) {
     console.log(this.state.route);
     console.log("new rout ", param1);
-    this.setState({
-      route: param1,
-      articleId: param2
-    });
+    if (param2 != undefined) {
+      this.setState({
+        route: param1,
+        articleId: param2
+      });
+    }
+    else {
+      this.setState({
+        route: param1
+      });
+    }
   }
 
 
@@ -60,17 +67,20 @@ class App extends Component {
       const removeIndex = localRoutes.findIndex(elem => elem.name === 'create news')
       if (removeIndex != -1)
         localRoutes.splice(removeIndex, 1)
-      console.log(localRoutes)
+      console.log("REMOVE_1")
     }
 
     if (!(accessRights & (1 << Actions_delUser))) {
       const removeIndex = localRoutes.findIndex(elem => elem.name === 'delete');
       if (removeIndex != -1)
         localRoutes.splice(removeIndex, 1)
+      console.log("REMOVE_2")
     }
+    console.log(localRoutes)
+
     switch (route) {
       case 0:
-        mainPart = <Login />
+        mainPart = <Login handleClick={this.handleClick} />
         break;
       case 1:
         mainPart = <Register />

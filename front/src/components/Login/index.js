@@ -11,6 +11,7 @@ import translitRusEng from 'translit-rus-eng';
 export default class Login extends Component {
     constructor(props) {
         super(props);
+        this.handleClick = props.handleClick;
 
         this.state = {
             login: "",
@@ -72,6 +73,7 @@ export default class Login extends Component {
             localStorage.setItem("authtoken", json["authtoken"]);
             localStorage.setItem("accessrights", json["accessrights"]);
             alert("login is ok");
+            this.handleClick(3);
         })
             .catch((error) => {
             })
